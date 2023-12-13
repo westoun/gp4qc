@@ -6,14 +6,14 @@ from random import randint, sample
 from .gate import Gate
 
 
-class CNot(Gate):
+class CZ(Gate):
     controll: int
     target: int
 
     def __init__(self, qubit_num: int):
         assert (
             qubit_num > 1
-        ), "The CNot Gate requires at least 2 qubits to operate as intended."
+        ), "The Controlled Z Gate requires at least 2 qubits to operate as intended."
 
         self._qubit_num = qubit_num
         self.target, self.controll = sample(range(0, qubit_num), 2)
@@ -22,5 +22,5 @@ class CNot(Gate):
         self.target, self.controll = sample(range(0, self._qubit_num), 2)
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.cx(self.controll, self.target)
+        circuit.cz(self.controll, self.target)
         return circuit

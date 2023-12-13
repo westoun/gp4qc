@@ -8,11 +8,11 @@ from scipy.spatial import distance
 from statistics import mean
 from typing import Any, List, Callable
 
-from gates import Gate, GateSet, Hadamard, CNot, Identity
+from gates import Gate, GateSet, Hadamard, X, Y, Z, CX, CY, CZ, Identity
 
 
-POPULATION_SIZE = 20
-MAX_GENERATIONS = 10
+POPULATION_SIZE = 50
+MAX_GENERATIONS = 20
 CROSSOVER_PROBABILITY = 0.5
 MUTATION_PROBABILITY = 0.3
 CHROMOSOME_LENGTH = 5
@@ -120,7 +120,9 @@ def init_toolbox(gate_set: GateSet, target_distribution: List[float]) -> Any:
 
 
 if __name__ == "__main__":
-    gate_set: GateSet = GateSet(gates=[Hadamard, CNot, Identity], qubit_num=QUBIT_NUM)
+    gate_set: GateSet = GateSet(
+        gates=[Hadamard, X, Y, Z, CX, CY, CZ, Identity], qubit_num=QUBIT_NUM
+    )
     target_distribution: List[float] = [0.5, 0, 0, 0.5]
 
     toolbox = init_toolbox(gate_set, target_distribution)
