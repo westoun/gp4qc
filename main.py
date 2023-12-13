@@ -11,12 +11,13 @@ from typing import Any, List, Callable
 from gates import Gate, GateSet, Hadamard, X, Y, Z, CX, CY, CZ, Identity
 
 
-POPULATION_SIZE = 50
-MAX_GENERATIONS = 20
+POPULATION_SIZE = 100
+MAX_GENERATIONS = 50
 CROSSOVER_PROBABILITY = 0.5
-MUTATION_PROBABILITY = 0.3
+SWAP_MUTATION_PROBABILITY = 0.1
+OPERAND_MUTATION_PROBABILITY = 0.4
 CHROMOSOME_LENGTH = 5
-QUBIT_NUM = 2
+QUBIT_NUM = 3
 
 
 def create_individual(container: Callable, gate_set: GateSet, chromosome_length: int):
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     gate_set: GateSet = GateSet(
         gates=[Hadamard, X, Y, Z, CX, CY, CZ, Identity], qubit_num=QUBIT_NUM
     )
-    target_distribution: List[float] = [0.5, 0, 0, 0.5]
+    target_distribution: List[float] = [0.5, 0, 0, 0, 0, 0, 0, 0.5]
 
     toolbox = init_toolbox(gate_set, target_distribution)
 
@@ -140,12 +141,12 @@ if __name__ == "__main__":
                 del offspring[i - 1].fitness.values, offspring[i].fitness.values
 
         for i in range(len(offspring)):
-            if random.random() < MUTATION_PROBABILITY:
+            if random.random() < SWAP_MUTATION_PROBABILITY:
                 (offspring[i],) = toolbox.gate_mutate(offspring[i])
                 del offspring[i].fitness.values
 
         for i in range(len(offspring)):
-            if random.random() < MUTATION_PROBABILITY:
+            if random.random() < OPERAND_MUTATION_PROBABILITY:
                 (offspring[i],) = toolbox.operand_mutate(offspring[i])
                 del offspring[i].fitness.values
 
@@ -165,5 +166,10 @@ if __name__ == "__main__":
     best_performer_index = fitness_values.index(min(fitness_values))
     best_performer = offspring[best_performer_index]
     circuit = build_circuit(best_performer, qubit_num=QUBIT_NUM)
+
+    print(f"\nBest performing fitness value: {fitness_values[best_performer_index]}")
+    print(best_performer)
+    print(circuit)
+
     circuit.draw("mpl")
     plt.show()
