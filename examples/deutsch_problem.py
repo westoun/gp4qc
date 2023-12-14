@@ -82,14 +82,14 @@ def encode(states: List[int]) -> List[int]:
 
 def run_deutsch():
     ga_params = GAParams(
-        population_size=20,
-        generations=20,
+        population_size=100,
+        generations=50,
         crossover_prob=0.4,
-        swap_mutation_prob=0.1,
-        operand_mutation_prob=0.1,
+        swap_mutation_prob=0.2,
+        operand_mutation_prob=0.3,
         chromosome_length=4,
         fitness_threshold=0.1,
-        fitness_threshold_at=1,
+        fitness_threshold_at=10,
     )
 
     QUBIT_NUM = 2
