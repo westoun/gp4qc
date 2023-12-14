@@ -3,7 +3,7 @@
 from qiskit import QuantumCircuit, Aer
 from typing import List
 
-from gates import Gate
+from gates import Gate, InputEncoding
 
 
 def run_circuit(circuit: QuantumCircuit) -> List[float]:
@@ -16,8 +16,11 @@ def run_circuit(circuit: QuantumCircuit) -> List[float]:
     return state_distribution
 
 
-def build_circuit(chromosome: List[Gate], qubit_num: int) -> QuantumCircuit:
+def build_circuit(chromosome: List[Gate], qubit_num: int, input_gate: InputEncoding = None) -> QuantumCircuit:
     circuit = QuantumCircuit(qubit_num)
+
+    if input_gate is not None:
+        circuit = input_gate.apply_to(circuit)
 
     for gate in chromosome:
         circuit = gate.apply_to(circuit)

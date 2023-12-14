@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from gates import Gate
+from gates import Gate, InputEncoding
 
 
 class Fitness(ABC):
@@ -12,7 +12,12 @@ class Fitness(ABC):
     """
 
     @abstractmethod
-    def __init__(self, target_distributions: List[List[float]]) -> None:
+    def __init__(
+        self,
+        target_distributions: List[List[float]],
+        qubit_num: int,
+        input_gate: InputEncoding = None,
+    ) -> None:
         ...
 
     @abstractmethod
