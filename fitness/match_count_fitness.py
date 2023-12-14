@@ -9,7 +9,7 @@ from .fitness import Fitness
 from .utils import build_circuit, run_circuit, aggregate_state_distribution
 
 
-class Jensensshannon(Fitness):
+class MatchCount(Fitness):
     def __init__(
         self,
         target_distributions: List[List[float]],
@@ -23,7 +23,7 @@ class Jensensshannon(Fitness):
         self.input_gate = input_gate
 
     def evaluate(self, chromosome: List[Gate]) -> float:
-        errors: List[float] = []
+        match_count: int = 0
 
         for i, target_distribution in enumerate(self.target_distributions):
             if self.input_gate is not None:
@@ -43,8 +43,16 @@ class Jensensshannon(Fitness):
 
             assert len(state_distribution) == len(target_distribution)
 
-            error = distance.jensenshannon(state_distribution, target_distribution)
-            errors.append(error)
+            match_index = target_distribution.index(1.0)
+            assert (
+                match_index != -1
+            ), f"Check the formatting of your target distributions. A 1 is missing in the {i + 1}. distribution."
 
-        error = mean(errors)
+            probability = state_distribution[match_index]
+            if probability > 0.5:
+                match_count += 1
+
+        error = (len(self.target_distributions) - match_count) / len(
+            self.target_distributions
+        )
         return (error,)
