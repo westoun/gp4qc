@@ -26,13 +26,11 @@ class Jensensshannon(Fitness):
         errors: List[float] = []
 
         for i, target_distribution in enumerate(self.target_distributions):
-            if self.input_gate is not None:
-                self.input_gate.set_input_index(i)
-
             circuit = build_circuit(
                 chromosome,
                 qubit_num=self.qubit_num + self.ancillary_num,
                 input_gate=self.input_gate,
+                case_index=i,
             )
 
             state_distribution = run_circuit(circuit)
@@ -41,7 +39,9 @@ class Jensensshannon(Fitness):
                 state_distribution, self.qubit_num, self.ancillary_num
             )
 
-            assert len(state_distribution) == len(target_distribution)
+            assert len(state_distribution) == len(
+                target_distribution
+            ), f"Missmatch between produced distribution (len {len(state_distribution)}) and target distribution (len {len(target_distribution)})"
 
             error = distance.jensenshannon(state_distribution, target_distribution)
             errors.append(error)

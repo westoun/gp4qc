@@ -11,3 +11,4 @@ from .z import Z
 from .swap import Swap
 from .input import InputEncoding, BinaryEncoding
 from .ccx import CCX
+from .oracle import Oracle
