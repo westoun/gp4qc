@@ -15,12 +15,9 @@ class GA:
 
     _evolved_population: List[Gate] = None
 
-    def __init__(
-        self, gate_set: GateSet, fitness: Fitness, qubit_num: int, params: GAParams
-    ) -> None:
+    def __init__(self, gate_set: GateSet, fitness: Fitness, params: GAParams) -> None:
         self.gate_set = gate_set
         self.fitness = fitness
-        self.qubit_num = qubit_num
         self.params = params
 
     def __call__(self):

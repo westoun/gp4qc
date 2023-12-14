@@ -29,7 +29,7 @@ def run_bell_state_3qubits():
         target_distributions=target_distributions, qubit_num=QUBIT_NUM
     )
 
-    genetic_algorithm = GA(gate_set, fitness, qubit_num=3, params=ga_params)
+    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3
