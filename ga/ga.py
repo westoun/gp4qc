@@ -68,13 +68,13 @@ class GA:
         self._evolved_population = population
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
-        # TODO: Implement n > 1
-
         assert self._evolved_population is not None
 
-        fitness_values = [ind.fitness.values[0] for ind in self._evolved_population]
-        best_performer_index = fitness_values.index(min(fitness_values))
-        best_performer = self._evolved_population[best_performer_index]
-        fitness_value = fitness_values[best_performer_index]
+        self._evolved_population.sort(key=lambda item: item.fitness.values[0])
+        top_n_chromosomes = self._evolved_population[:n]
 
-        return [(best_performer, fitness_value)]
+        result = [
+            (chromosome, chromosome.fitness.values[0])
+            for chromosome in top_n_chromosomes
+        ]
+        return result

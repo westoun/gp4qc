@@ -32,12 +32,13 @@ def run_bell_state_2qubits():
     genetic_algorithm = GA(gate_set, fitness, qubit_num=3, params=ga_params)
     genetic_algorithm.run()
 
-    best_performer, fitness_value = genetic_algorithm.get_best_chromosomes(n=1)[0]
-    circuit = build_circuit(best_performer, qubit_num=QUBIT_NUM)
 
-    print(f"\nBest performing fitness value: {fitness_value}")
-    print(best_performer)
-    print(circuit)
+    TOP_N = 3
+    for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
+        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
+        
+        print(f"\nFitness value: {fitness_value}")
+        print(circuit)
 
-    circuit.draw("mpl")
-    plt.show()
+        # circuit.draw("mpl")
+        # plt.show()
