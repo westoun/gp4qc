@@ -42,7 +42,7 @@ def construct_oracle_circuit(
         chromosome_length=4,
         fitness_threshold=0.01,
         fitness_threshold_at=1,
-        log_average_fitness=False
+        log_average_fitness=False,
     )
     gate_set: GateSet = GateSet(
         gates=[Hadamard, X, CX, Identity],
@@ -110,33 +110,21 @@ def run_deutsch():
     )
     oracle_circuits = [
         balanced_equal_oracle_circuit,
-        balanced_equal_oracle_circuit,
-        balanced_swapped_oracle_circuit,
         balanced_swapped_oracle_circuit,
         constant_0_oracle_circuit,
-        constant_0_oracle_circuit,
-        constant_1_oracle_circuit,
         constant_1_oracle_circuit,
     ]
 
     input_values: List[List[int]] = [
         [0],
-        [1],
         [0],
-        [1],
         [0],
-        [1],
         [0],
-        [1],
     ]
     target_distributions: List[List[float]] = [
         [0, 1],  # balanced equal
-        [0, 1],  # balanced equal
-        [0, 1],  # balanced swapped
         [0, 1],  # balanced swapped
         [1, 0],  # constant 0
-        [1, 0],  # constant 0
-        [1, 0],  # constant 1
         [1, 0],  # constant 1
     ]
 
