@@ -29,7 +29,6 @@ def construct_oracle_circuit(
     input_values: List[List[int]],
     target_distributions: List[List[float]],
     qubit_num: int = 2,
-    measurement_qubit_num: int = 1
 ) -> QuantumCircuit:
     input_gate: InputEncoding = BinaryEncoding(input_values, qubit_num=qubit_num)
 
@@ -40,7 +39,7 @@ def construct_oracle_circuit(
         swap_mutation_prob=0.1,
         operand_mutation_prob=0.4,
         chromosome_length=4,
-        fitness_threshold=0.01,
+        fitness_threshold=0.1,
         fitness_threshold_at=1,
         log_average_fitness=False,
     )
@@ -52,7 +51,6 @@ def construct_oracle_circuit(
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions,
         qubit_num=qubit_num,
-        measurement_qubit_num=measurement_qubit_num,
         input_gate=input_gate,
     )
 
@@ -69,10 +67,23 @@ def construct_oracle_circuit(
     return circuit
 
 
+def encode(states: List[int]) -> List[int]:
+    encoding = []
+    for _ in range(2 ** len(states)):
+        encoding.append(0)
+
+    encoding_index = 0
+    for i, state in enumerate(reversed(states)):
+        encoding_index += state * 2**i
+
+    encoding[encoding_index] = 1
+    return encoding
+
+
 def run_deutsch():
     ga_params = GAParams(
-        population_size=100,
-        generations=50,
+        population_size=20,
+        generations=20,
         crossover_prob=0.4,
         swap_mutation_prob=0.1,
         operand_mutation_prob=0.1,
@@ -85,28 +96,44 @@ def run_deutsch():
     MEASUREMENT_QUBIT_NUM = 1
 
     balanced_equal_oracle_circuit = construct_oracle_circuit(
-        [[0], [1]],
-        [[1, 0], [0, 1]],
+        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [
+            encode([0, 0]),
+            encode([0, 1]),
+            encode([1, 1]),
+            encode([1, 0]),
+        ],
         qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     balanced_swapped_oracle_circuit = construct_oracle_circuit(
-        [[0], [1]],
-        [[0, 1], [1, 0]],
+        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [
+            encode([0, 1]),
+            encode([0, 0]),
+            encode([1, 0]),
+            encode([1, 1]),
+        ],
         qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     constant_0_oracle_circuit = construct_oracle_circuit(
-        [[0], [1]],
-        [[1, 0], [1, 0]],
+        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [
+            encode([0, 0]),
+            encode([0, 1]),
+            encode([1, 0]),
+            encode([1, 1]),
+        ],
         qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     constant_1_oracle_circuit = construct_oracle_circuit(
-        [[0], [1]],
-        [[0, 1], [0, 1]],
+        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [
+            encode([0, 1]),
+            encode([0, 0]),
+            encode([1, 1]),
+            encode([1, 0]),
+        ],
         qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     oracle_circuits = [
         balanced_equal_oracle_circuit,
@@ -147,7 +174,7 @@ def run_deutsch():
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
     genetic_algorithm.run()
 
-    TOP_N = 3
+    TOP_N = 10
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
         circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
 
