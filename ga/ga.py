@@ -3,6 +3,7 @@
 import random
 from statistics import mean
 from typing import Any, List, Tuple
+import warnings
 
 from .params import GAParams
 from gates import Gate, GateSet
@@ -24,9 +25,13 @@ class GA:
         return self.run()
 
     def run(self):
-        toolbox = init_toolbox(
-            self.gate_set, self.params.chromosome_length, self.fitness
-        )
+        # Catch reinitialization warning if multiple GAs are used
+        # in one run.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            toolbox = init_toolbox(
+                self.gate_set, self.params.chromosome_length, self.fitness
+            )
 
         population = toolbox.population(n=self.params.population_size)
 
@@ -52,10 +57,14 @@ class GA:
 
             fitnesses = list(map(toolbox.evaluate, offspring))
 
-            average_fitness = mean([fit for (fit,) in fitnesses])
-            print(
-                f"Average population fitness at generation {generation}: {average_fitness}"
-            )
+            if (
+                self.params.log_average_fitness
+                and generation % self.params.log_average_fitness_at == 0
+            ):
+                average_fitness = mean([fit for (fit,) in fitnesses])
+                print(
+                    f"Average population fitness at generation {generation}: {average_fitness}"
+                )
 
             for fit, ind in zip(fitnesses, offspring):
                 ind.fitness.values = fit
@@ -67,7 +76,7 @@ class GA:
                 n=self.params.fitness_threshold_at + 1
             )[self.params.fitness_threshold_at]
             if fitness_at <= self.params.fitness_threshold:
-                print("Found good enough solution. Aborting GA.")
+                print("\tFound good enough solution. Aborting GA.")
                 return
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
