@@ -7,6 +7,10 @@ from gates import Gate
 
 
 class Fitness(ABC):
+    """Compute the fitness function of a chromosome including all
+    this may entail (constructing the circuit, optimizing it, ...).
+    """
+
     @abstractmethod
     def __init__(self, target_distributions: List[List[float]]) -> None:
         ...

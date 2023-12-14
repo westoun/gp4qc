@@ -11,6 +11,8 @@ from fitness import Fitness
 
 
 class GA:
+    """Wrapper class for the genetic algorithm code."""
+
     _evolved_population: List[Gate] = None
 
     def __init__(
@@ -74,5 +76,5 @@ class GA:
         best_performer_index = fitness_values.index(min(fitness_values))
         best_performer = self._evolved_population[best_performer_index]
         fitness_value = fitness_values[best_performer_index]
-        
+
         return [(best_performer, fitness_value)]

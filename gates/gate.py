@@ -5,6 +5,10 @@ from qiskit import QuantumCircuit
 
 
 class Gate(ABC):
+    """Base class of all gates including functions for
+    their mutation behavior and circuit representation.
+    """
+
     @abstractmethod
     def __init__(self, qubit_num: int) -> None:
         ...
