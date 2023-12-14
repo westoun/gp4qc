@@ -23,6 +23,7 @@ def run_bell_state_2qubits():
         swap_mutation_prob=0.1,
         operand_mutation_prob=0.4,
         chromosome_length=4,
+        log_average_fitness_at=1
     )
 
     fitness: Fitness = Jensensshannon(

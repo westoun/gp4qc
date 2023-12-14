@@ -29,7 +29,7 @@ def construct_oracle_circuit(
     input_values: List[List[int]],
     target_distributions: List[List[float]],
     qubit_num: int = 2,
-    ancillary_num: int = 1,
+    measurement_qubit_num: int = 1
 ) -> QuantumCircuit:
     input_gate: InputEncoding = BinaryEncoding(input_values, qubit_num=qubit_num)
 
@@ -46,13 +46,13 @@ def construct_oracle_circuit(
     )
     gate_set: GateSet = GateSet(
         gates=[Hadamard, X, CX, Identity],
-        qubit_num=qubit_num + ancillary_num,
+        qubit_num=qubit_num,
     )
 
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions,
         qubit_num=qubit_num,
-        ancillary_num=ancillary_num,
+        measurement_qubit_num=measurement_qubit_num,
         input_gate=input_gate,
     )
 
@@ -65,7 +65,7 @@ def construct_oracle_circuit(
         print("Fitness threshold of oracle not reached.")
         print(f"Using best oracle at fitness of {fitness_value}")
 
-    circuit = build_circuit(chromosome, qubit_num=qubit_num + ancillary_num)
+    circuit = build_circuit(chromosome, qubit_num=qubit_num)
     return circuit
 
 
@@ -81,32 +81,32 @@ def run_deutsch():
         fitness_threshold_at=1,
     )
 
-    QUBIT_NUM = 1
-    ANCILLARY_NUM = 1
+    QUBIT_NUM = 2
+    MEASUREMENT_QUBIT_NUM = 1
 
     balanced_equal_oracle_circuit = construct_oracle_circuit(
         [[0], [1]],
         [[1, 0], [0, 1]],
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     balanced_swapped_oracle_circuit = construct_oracle_circuit(
         [[0], [1]],
         [[0, 1], [1, 0]],
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     constant_0_oracle_circuit = construct_oracle_circuit(
         [[0], [1]],
         [[1, 0], [1, 0]],
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     constant_1_oracle_circuit = construct_oracle_circuit(
         [[0], [1]],
         [[0, 1], [0, 1]],
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
     )
     oracle_circuits = [
         balanced_equal_oracle_circuit,
@@ -133,7 +133,6 @@ def run_deutsch():
     gate_set: GateSet = GateSet(
         gates=[Hadamard, X, Identity, Oracle],
         qubit_num=QUBIT_NUM,
-        ancillary_qubit_num=ANCILLARY_NUM,
     )
 
     input_gate: InputEncoding = BinaryEncoding(input_values, qubit_num=QUBIT_NUM)
@@ -141,7 +140,7 @@ def run_deutsch():
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions,
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
         input_gate=input_gate,
     )
 
@@ -150,7 +149,7 @@ def run_deutsch():
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
-        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM + ANCILLARY_NUM)
+        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
 
         print(f"\nFitness value: {fitness_value}")
         print(circuit)

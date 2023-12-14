@@ -21,12 +21,12 @@ from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, build_circuit, MatchCount
 
 def run_half_adder():
-    QUBIT_NUM = 2
-    ANCILLARY_NUM = 1
+    QUBIT_NUM = 3
+    MEASUREMENT_QUBIT_NUM = 2
 
     gate_set: GateSet = GateSet(
         gates=[Hadamard, Y, Z, CY, CZ, Swap, X, CX, CCX, Identity],
-        qubit_num=QUBIT_NUM + ANCILLARY_NUM,
+        qubit_num=QUBIT_NUM
     )
     input_values: List[List[int]] = [[0, 0], [0, 1], [1, 0], [1, 1]]
     target_distributions: List[List[float]] = [
@@ -47,12 +47,13 @@ def run_half_adder():
         chromosome_length=5,
         fitness_threshold=0.1,
         fitness_threshold_at=3,
+        log_average_fitness_at=1
     )
 
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions,
         qubit_num=QUBIT_NUM,
-        ancillary_num=ANCILLARY_NUM,
+        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
         input_gate=input_gate,
     )
 
@@ -61,7 +62,7 @@ def run_half_adder():
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
-        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM + ANCILLARY_NUM)
+        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
 
         print(f"\nFitness value: {fitness_value}")
         print(circuit)

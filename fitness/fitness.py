@@ -16,7 +16,7 @@ class Fitness(ABC):
         self,
         target_distributions: List[List[float]],
         qubit_num: int,
-        ancillary_num: int = 0,
+        measurement_qubit_num: int,
         input_gate: InputEncoding = None,
     ) -> None:
         ...

@@ -41,16 +41,16 @@ def build_circuit(
 
 
 def aggregate_state_distribution(
-    state_distribution: List[float], qubit_num: int, ancillary_num: int
+    state_distribution: List[float], measurement_qubit_num: int, ancillary_num: int
 ) -> List[float]:
     # This function assumes that ancillary qubits were added
     # after all "normal" qubits have been added.
 
     aggregated_distribution: List[float] = []
-    for _ in range(2**qubit_num):
+    for _ in range(2**measurement_qubit_num):
         aggregated_distribution.append(0.0)
 
-    for i in range(2**qubit_num):
+    for i in range(2**measurement_qubit_num):
         for j in range(2**ancillary_num):
             aggregated_distribution[i] += state_distribution[i * 2**ancillary_num + j]
 

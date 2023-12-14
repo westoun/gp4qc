@@ -8,21 +8,14 @@ from .oracle import Oracle
 
 
 class GateSet:
-    def __init__(
-        self, gates: List[Type[Gate]], qubit_num: int, ancillary_qubit_num: int = 0
-    ) -> None:
+    def __init__(self, gates: List[Type[Gate]], qubit_num: int) -> None:
         self._gates = gates
         self._qubit_num = qubit_num
-        self._ancillary_qubit_num = ancillary_qubit_num
 
     def random_gate(self) -> Gate:
         """Selects a gate type at random and initializes it."""
 
         GateType = choice(self._gates)
-
-        if GateType in [Oracle]:
-            gate = GateType(qubit_num=self._qubit_num + self._ancillary_qubit_num)
-        else:
-            gate = GateType(qubit_num=self._qubit_num)
+        gate = GateType(qubit_num=self._qubit_num)
 
         return gate

@@ -24,7 +24,8 @@ def run_bell_state_3qubits():
         operand_mutation_prob=0.4,
         chromosome_length=5,
         fitness_threshold=0.01,
-        fitness_threshold_at=3
+        fitness_threshold_at=3,
+        log_average_fitness_at=1
     )
 
     fitness: Fitness = Jensensshannon(
