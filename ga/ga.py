@@ -76,7 +76,7 @@ class GA:
                 n=self.params.fitness_threshold_at + 1
             )[self.params.fitness_threshold_at]
             if fitness_at <= self.params.fitness_threshold:
-                print("\tFound good enough solution. Aborting GA.")
+                print("\tFound good enough solution. Skipping remaining generations.")
                 return
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
