@@ -16,7 +16,9 @@ def run_circuit(circuit: QuantumCircuit) -> List[float]:
     return state_distribution
 
 
-def build_circuit(chromosome: List[Gate], qubit_num: int, input_gate: InputEncoding = None) -> QuantumCircuit:
+def build_circuit(
+    chromosome: List[Gate], qubit_num: int, input_gate: InputEncoding = None
+) -> QuantumCircuit:
     circuit = QuantumCircuit(qubit_num)
 
     if input_gate is not None:
@@ -26,3 +28,20 @@ def build_circuit(chromosome: List[Gate], qubit_num: int, input_gate: InputEncod
         circuit = gate.apply_to(circuit)
 
     return circuit
+
+
+def aggregate_state_distribution(
+    state_distribution: List[float], qubit_num: int, ancillary_num: int
+) -> List[float]:
+    # This function assumes that ancillary qubits were added
+    # after all "normal" qubits have been added.
+
+    aggregated_distribution: List[float] = []
+    for _ in range(2**qubit_num):
+        aggregated_distribution.append(0.0)
+
+    for i in range(2**qubit_num):
+        for j in range(2**ancillary_num):
+            aggregated_distribution[i] += state_distribution[i * 2**ancillary_num + j]
+
+    return aggregated_distribution
