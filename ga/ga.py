@@ -61,8 +61,14 @@ class GA:
                 ind.fitness.values = fit
 
             population = toolbox.select(offspring, k=len(population))
+            self._evolved_population = population
 
-        self._evolved_population = population
+            _, fitness_at = self.get_best_chromosomes(
+                n=self.params.fitness_threshold_at + 1
+            )[self.params.fitness_threshold_at]
+            if fitness_at <= self.params.fitness_threshold:
+                print("Found good enough solution. Aborting GA.")
+                return
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
         assert self._evolved_population is not None
