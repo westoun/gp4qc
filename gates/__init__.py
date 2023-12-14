@@ -8,3 +8,4 @@ from .identity import Identity
 from .x import X
 from .y import Y
 from .z import Z
+from .swap import Swap
