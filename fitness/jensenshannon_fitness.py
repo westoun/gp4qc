@@ -44,4 +44,10 @@ class Jensensshannon(Fitness):
             errors.append(error)
 
         error = mean(errors)
+
+        for validity_check in self.params.validity_checks:
+            if not validity_check(chromosome):
+                error += 100
+                break
+
         return (error,)

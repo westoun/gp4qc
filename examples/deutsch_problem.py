@@ -23,6 +23,11 @@ from gates import (
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness.validity_checks import (
+    has_exactly_1_input,
+    has_exactly_1_oracle,
+    has_input_at_first_position,
+)
 
 
 def construct_oracle_circuit(
@@ -30,16 +35,20 @@ def construct_oracle_circuit(
 ) -> QuantumCircuit:
     ga_params = GAParams(
         population_size=200,
-        generations=40,
+        generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.3,
+        swap_mutation_prob=0.4,
         operand_mutation_prob=0.2,
-        chromosome_length=3 + 1,  # + 1 for input gate
+        chromosome_length=4 + 1,  # + 1 for input gate
         fitness_threshold=0.1,
         fitness_threshold_at=1,
         log_average_fitness=False,
     )
-    fitness_params = FitnessParams(qubit_num=2, measurement_qubit_num=2)
+    fitness_params = FitnessParams(
+        qubit_num=2,
+        measurement_qubit_num=2,
+        validity_checks=[has_exactly_1_input, has_input_at_first_position],
+    )
 
     gate_set: GateSet = GateSet(
         gates=[
@@ -66,6 +75,9 @@ def construct_oracle_circuit(
     else:
         print("Successfully learned oracle.")
 
+    # Remove input layer
+    chromosome = chromosome[1:]
+
     circuit = build_circuit(chromosome, qubit_num=2)
     return circuit
 
@@ -84,18 +96,6 @@ def encode(states: List[int]) -> List[int]:
 
 
 def run_deutsch():
-    ga_params = GAParams(
-        population_size=100,
-        generations=50,
-        crossover_prob=0.4,
-        swap_mutation_prob=0.2,
-        operand_mutation_prob=0.3,
-        chromosome_length=4 + 1,  # + 1 for encoding layer
-        fitness_threshold=0.1,
-        fitness_threshold_at=10,
-    )
-    fitness_params = FitnessParams(qubit_num=2, measurement_qubit_num=1)
-
     balanced_equal_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
         [
@@ -139,12 +139,24 @@ def run_deutsch():
         constant_1_oracle_circuit,
     ]
 
-    input_values: List[List[int]] = [
-        [0],
-        [0],
-        [0],
-        [0],
-    ]
+    ga_params = GAParams(
+        population_size=100,
+        generations=50,
+        crossover_prob=0.5,
+        swap_mutation_prob=0.3,
+        operand_mutation_prob=0.2,
+        chromosome_length=4 + 1,  # + 1 for encoding layer
+        fitness_threshold=0.1,
+        fitness_threshold_at=10,
+    )
+    fitness_params = FitnessParams(
+        qubit_num=2,
+        measurement_qubit_num=1,
+        validity_checks=[
+            has_exactly_1_oracle,
+        ],
+    )
+
     target_distributions: List[List[float]] = [
         [0, 1],  # balanced equal
         [0, 1],  # balanced swapped
@@ -158,7 +170,6 @@ def run_deutsch():
             X,
             Identity,
             Oracle.set_circuits(oracle_circuits),
-            BinaryEncoding.init_circuits(input_values, qubit_num=1),
         ],
         qubit_num=2,
     )

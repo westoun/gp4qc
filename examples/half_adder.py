@@ -19,6 +19,7 @@ from gates import (
 
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness.validity_checks import has_exactly_1_input
 
 
 def run_half_adder():
@@ -59,7 +60,9 @@ def run_half_adder():
         log_average_fitness_at=1,
     )
 
-    fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=2)
+    fitness_params = FitnessParams(
+        qubit_num=3, measurement_qubit_num=2, validity_checks=[has_exactly_1_input]
+    )
 
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions, params=fitness_params

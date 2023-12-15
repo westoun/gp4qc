@@ -52,4 +52,10 @@ class MatchCount(Fitness):
         error = (len(self.target_distributions) - match_count) / len(
             self.target_distributions
         )
+
+        for validity_check in self.params.validity_checks:
+            if not validity_check(chromosome):
+                error += 100
+                break
+
         return (error,)
