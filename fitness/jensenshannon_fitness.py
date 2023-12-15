@@ -15,7 +15,6 @@ class Jensensshannon(Fitness):
         target_distributions: List[List[float]],
         qubit_num: int,
         measurement_qubit_num: int = None,
-        input_gate: InputEncoding = None,
     ) -> None:
         self.target_distributions = target_distributions
         self.qubit_num = qubit_num
@@ -25,9 +24,6 @@ class Jensensshannon(Fitness):
         else:
             self.measurement_qubit_num = measurement_qubit_num
 
-        
-        self.input_gate = input_gate
-
     def evaluate(self, chromosome: List[Gate]) -> float:
         errors: List[float] = []
 
@@ -35,7 +31,6 @@ class Jensensshannon(Fitness):
             circuit = build_circuit(
                 chromosome,
                 qubit_num=self.qubit_num,
-                input_gate=self.input_gate,
                 case_index=i,
             )
 

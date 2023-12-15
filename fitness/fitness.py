@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from gates import Gate, InputEncoding
+from gates import Gate
 
 
 class Fitness(ABC):
@@ -17,7 +17,6 @@ class Fitness(ABC):
         target_distributions: List[List[float]],
         qubit_num: int,
         measurement_qubit_num: int,
-        input_gate: InputEncoding = None,
     ) -> None:
         ...
 

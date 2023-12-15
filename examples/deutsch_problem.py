@@ -30,28 +30,30 @@ def construct_oracle_circuit(
     target_distributions: List[List[float]],
     qubit_num: int = 2,
 ) -> QuantumCircuit:
-    input_gate: InputEncoding = BinaryEncoding(input_values, qubit_num=qubit_num)
-
     ga_params = GAParams(
         population_size=100,
-        generations=20,
+        generations=40,
         crossover_prob=0.5,
-        swap_mutation_prob=0.1,
-        operand_mutation_prob=0.4,
-        chromosome_length=4,
+        swap_mutation_prob=0.3,
+        operand_mutation_prob=0.1,
+        chromosome_length=4 + 1,  # + 1 for input gate
         fitness_threshold=0.1,
         fitness_threshold_at=1,
         log_average_fitness=False,
     )
     gate_set: GateSet = GateSet(
-        gates=[Hadamard, X, CX, Identity],
+        gates=[
+            Hadamard,
+            X,
+            CX,
+            Identity,
+            BinaryEncoding.init_circuits(input_values, qubit_num),
+        ],
         qubit_num=qubit_num,
     )
 
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions,
-        qubit_num=qubit_num,
-        input_gate=input_gate,
+        target_distributions=target_distributions, qubit_num=qubit_num
     )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
@@ -62,6 +64,8 @@ def construct_oracle_circuit(
     if fitness_value > ga_params.fitness_threshold:
         print("Fitness threshold of oracle not reached.")
         print(f"Using best oracle at fitness of {fitness_value}")
+    else:
+        print("Successfully learned oracle.")
 
     circuit = build_circuit(chromosome, qubit_num=qubit_num)
     return circuit
@@ -87,7 +91,7 @@ def run_deutsch():
         crossover_prob=0.4,
         swap_mutation_prob=0.2,
         operand_mutation_prob=0.3,
-        chromosome_length=4,
+        chromosome_length=4 + 1,  # + 1 for encoding layer
         fitness_threshold=0.1,
         fitness_threshold_at=10,
     )
@@ -155,26 +159,27 @@ def run_deutsch():
         [1, 0],  # constant 1
     ]
 
-    Oracle.set_circuits(oracle_circuits)
-
     gate_set: GateSet = GateSet(
-        gates=[Hadamard, X, Identity, Oracle],
+        gates=[
+            Hadamard,
+            X,
+            Identity,
+            Oracle.set_circuits(oracle_circuits),
+            BinaryEncoding.init_circuits(input_values, qubit_num=QUBIT_NUM),
+        ],
         qubit_num=QUBIT_NUM,
     )
-
-    input_gate: InputEncoding = BinaryEncoding(input_values, qubit_num=QUBIT_NUM)
 
     fitness: Fitness = Jensensshannon(
         target_distributions=target_distributions,
         qubit_num=QUBIT_NUM,
         measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
-        input_gate=input_gate,
     )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
     genetic_algorithm.run()
 
-    TOP_N = 10
+    TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
         circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
 

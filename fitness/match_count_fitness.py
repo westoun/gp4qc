@@ -15,7 +15,6 @@ class MatchCount(Fitness):
         target_distributions: List[List[float]],
         qubit_num: int,
         measurement_qubit_num: int = None,
-        input_gate: InputEncoding = None,
     ) -> None:
         self.target_distributions = target_distributions
         self.qubit_num = qubit_num
@@ -25,19 +24,13 @@ class MatchCount(Fitness):
         else:
             self.measurement_qubit_num = measurement_qubit_num
 
-        self.input_gate = input_gate
-
     def evaluate(self, chromosome: List[Gate]) -> float:
         match_count: int = 0
 
         for i, target_distribution in enumerate(self.target_distributions):
-            if self.input_gate is not None:
-                self.input_gate.set_input_index(i)
-
             circuit = build_circuit(
                 chromosome,
                 qubit_num=self.qubit_num,
-                input_gate=self.input_gate,
             )
 
             state_distribution = run_circuit(circuit)

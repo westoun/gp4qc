@@ -38,3 +38,4 @@ class Oracle(MultiCaseGate, ABC):
     def set_circuits(cls, circuits: List[QuantumCircuit]) -> "Oracle":
         cls._circuits = circuits
         cls._oracle_qubit_num = len(circuits[0].qubits)
+        return cls

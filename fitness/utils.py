@@ -9,7 +9,7 @@ from gates import Gate, MultiCaseGate, InputEncoding, Oracle
 def run_circuit(circuit: QuantumCircuit) -> List[float]:
     backend = Aer.get_backend("statevector_simulator")
 
-    transpiled_circuit = circuit.decompose()
+    transpiled_circuit = circuit.decompose(reps=2)
 
     job = backend.run(transpiled_circuit)
     result = job.result()
@@ -22,14 +22,9 @@ def run_circuit(circuit: QuantumCircuit) -> List[float]:
 def build_circuit(
     chromosome: List[Gate],
     qubit_num: int,
-    input_gate: InputEncoding = None,
     case_index=0,
 ) -> QuantumCircuit:
     circuit = QuantumCircuit(qubit_num)
-
-    if input_gate is not None:
-        input_gate.set_case_index(case_index)
-        circuit = input_gate.apply_to(circuit)
 
     for gate in chromosome:
         if issubclass(gate.__class__, MultiCaseGate):
