@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 
 from qiskit import QuantumCircuit, Aer, transpile
+from qiskit_aer import AerError
 from typing import List
 
 from gates import Gate, MultiCaseGate, InputEncoding, Oracle
 
 
-def run_circuit(circuit: QuantumCircuit) -> List[float]:
+def run_circuit(circuit: QuantumCircuit, decompose_reps: int = 1) -> List[float]:
     backend = Aer.get_backend("statevector_simulator")
 
-    transpiled_circuit = circuit.decompose(reps=2)
+    transpiled_circuit = circuit.decompose(reps=decompose_reps)
 
     job = backend.run(transpiled_circuit)
-    result = job.result()
+
+    try:
+        result = job.result()
+    except AerError as e:
+        if decompose_reps > 10:  # avoid infinite retries
+            raise AerError(str(e))
+
+        return run_circuit(circuit, decompose_reps=decompose_reps + 1)
 
     output_state = result.get_statevector(transpiled_circuit, decimals=3)
     state_distribution = output_state.probabilities().tolist()
