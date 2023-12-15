@@ -3,7 +3,7 @@
 from qiskit import QuantumCircuit, Aer, transpile
 from typing import List
 
-from gates import Gate, InputEncoding, Oracle
+from gates import Gate, MultiCaseGate, InputEncoding, Oracle
 
 
 def run_circuit(circuit: QuantumCircuit) -> List[float]:
@@ -28,12 +28,12 @@ def build_circuit(
     circuit = QuantumCircuit(qubit_num)
 
     if input_gate is not None:
-        input_gate.set_input_index(case_index)
+        input_gate.set_case_index(case_index)
         circuit = input_gate.apply_to(circuit)
 
     for gate in chromosome:
-        if type(gate) == Oracle:
-            gate.set_run_index(case_index)
+        if issubclass(gate.__class__, MultiCaseGate):
+            gate.set_case_index(case_index)
 
         circuit = gate.apply_to(circuit)
 

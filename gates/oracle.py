@@ -5,17 +5,15 @@ from qiskit import QuantumCircuit
 from random import sample
 from typing import List
 
-from .gate import Gate
+from .multicase_gate import MultiCaseGate
 
 
-class Oracle(Gate, ABC):
+class Oracle(MultiCaseGate, ABC):
     """ """
-
     _circuits: List[QuantumCircuit] = None
     _oracle_qubit_num: int = None
 
     targets = []
-    _run_index: int = 0
 
     def __init__(
         self,
@@ -32,13 +30,9 @@ class Oracle(Gate, ABC):
         self.targets = sample(range(0, self._qubit_num), self._oracle_qubit_num)
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        oracle_circuit = self._circuits[self._run_index].to_gate(label="oracle")
+        oracle_circuit = self._circuits[self._case_index].to_gate(label="oracle")
         circuit.append(oracle_circuit, self.targets)
         return circuit
-
-    def set_run_index(self, run_index: int) -> "Oracle":
-        self._run_index = run_index
-        return self
 
     @classmethod
     def set_circuits(cls, circuits: List[QuantumCircuit]) -> "Oracle":
