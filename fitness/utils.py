@@ -7,7 +7,7 @@ from typing import List
 from gates import Gate, MultiCaseGate, InputEncoding, Oracle
 
 
-def run_circuit(circuit: QuantumCircuit, decompose_reps: int = 1) -> List[float]:
+def run_circuit(circuit: QuantumCircuit, decompose_reps: int = 5) -> List[float]:
     backend = Aer.get_backend("statevector_simulator")
 
     transpiled_circuit = circuit.decompose(reps=decompose_reps)

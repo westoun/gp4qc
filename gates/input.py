@@ -11,17 +11,20 @@ class InputEncoding(MultiCaseGate, ABC):
     """ """
 
     _circuits: List[QuantumCircuit] = None
+    _targets: List[int] = None
 
     def __init__(self, qubit_num: int) -> None:
         assert (
             self._circuits is not None
         ), "No circuits have been initialized. Has init_circuits() been called?"
 
-        self._qubit_num = qubit_num
+        # the qubit num passed to init may be different from
+        # qubit num passed to init_circuits. Especially if
+        # ancillary qubits are used.
 
     @abstractclassmethod
     def init_circuits(
-        cls, input_values: List[List[int]], qubit_num: int, measurement_qubit_num: int
+        cls, input_values: List[List[int]], qubit_num: int
     ) -> "InputEncoding":
         ...
 
@@ -30,8 +33,7 @@ class InputEncoding(MultiCaseGate, ABC):
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         encoding_circuit = self._circuits[self._case_index].to_gate(label="input")
-        targets = list(range(self._qubit_num))
-        circuit.append(encoding_circuit, targets)
+        circuit.append(encoding_circuit, self._targets)
         return circuit
 
 
@@ -40,6 +42,8 @@ class BinaryEncoding(InputEncoding):
     def init_circuits(
         cls, input_values: List[List[int]], qubit_num: int
     ) -> "BinaryEncoding":
+        cls._targets = list(range(qubit_num))
+
         circuits: List[QuantumCircuit] = []
 
         for case_index in range(len(input_values)):

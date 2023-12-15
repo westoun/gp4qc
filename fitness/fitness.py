@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from gates import Gate
+from .params import FitnessParams
 
 
 class Fitness(ABC):
@@ -13,10 +14,7 @@ class Fitness(ABC):
 
     @abstractmethod
     def __init__(
-        self,
-        target_distributions: List[List[float]],
-        qubit_num: int,
-        measurement_qubit_num: int,
+        self, target_distributions: List[List[float]], params: FitnessParams
     ) -> None:
         ...
 

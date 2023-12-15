@@ -11,35 +11,31 @@ from .utils import (
     run_circuit,
     aggregate_state_distribution,
 )
+from .params import FitnessParams
 
 
 class MatchCount(Fitness):
     def __init__(
-        self,
-        target_distributions: List[List[float]],
-        qubit_num: int,
-        measurement_qubit_num: int = None,
+        self, target_distributions: List[List[float]], params: FitnessParams
     ) -> None:
         self.target_distributions = target_distributions
-        self.qubit_num = qubit_num
 
-        if measurement_qubit_num is None:
-            self.measurement_qubit_num = qubit_num
-        else:
-            self.measurement_qubit_num = measurement_qubit_num
+        self.params = params
 
     def evaluate(self, chromosome: List[Gate]) -> float:
         match_count: int = 0
 
         for i, target_distribution in enumerate(self.target_distributions):
-            circuit = build_circuit(chromosome, qubit_num=self.qubit_num, case_index=i)
+            circuit = build_circuit(
+                chromosome, qubit_num=self.params.qubit_num, case_index=i
+            )
 
             state_distribution = run_circuit(circuit)
 
             state_distribution = aggregate_state_distribution(
                 state_distribution,
-                measurement_qubit_num=self.measurement_qubit_num,
-                ancillary_num=self.qubit_num - self.measurement_qubit_num,
+                measurement_qubit_num=self.params.measurement_qubit_num,
+                ancillary_num=self.params.qubit_num - self.params.measurement_qubit_num,
             )
 
             assert len(state_distribution) == len(target_distribution)

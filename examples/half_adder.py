@@ -18,13 +18,10 @@ from gates import (
 )
 
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, MatchCount
+from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
 
 
 def run_half_adder():
-    QUBIT_NUM = 3
-    MEASUREMENT_QUBIT_NUM = 2
-
     input_values: List[List[int]] = [[0, 0], [0, 1], [1, 0], [1, 1]]
     target_distributions: List[List[float]] = [
         [1, 0, 0, 0],  # 00 => 00
@@ -45,9 +42,9 @@ def run_half_adder():
             CX,
             CCX,
             Identity,
-            BinaryEncoding.init_circuits(input_values, qubit_num=QUBIT_NUM),
+            BinaryEncoding.init_circuits(input_values, qubit_num=2),
         ],
-        qubit_num=QUBIT_NUM,
+        qubit_num=3,
     )
 
     ga_params = GAParams(
@@ -62,10 +59,10 @@ def run_half_adder():
         log_average_fitness_at=1,
     )
 
+    fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=2)
+
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions,
-        qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
+        target_distributions=target_distributions, params=fitness_params
     )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
@@ -73,7 +70,7 @@ def run_half_adder():
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
-        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
+        circuit = build_circuit(chromosome, qubit_num=3)
 
         print(f"\nFitness value: {fitness_value}")
         print(circuit)

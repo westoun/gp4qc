@@ -22,38 +22,37 @@ from gates import (
     Oracle,
 )
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit
+from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
 
 
 def construct_oracle_circuit(
-    input_values: List[List[int]],
-    target_distributions: List[List[float]],
-    qubit_num: int = 2,
+    input_values: List[List[int]], target_distributions: List[List[float]]
 ) -> QuantumCircuit:
     ga_params = GAParams(
-        population_size=100,
+        population_size=200,
         generations=40,
         crossover_prob=0.5,
         swap_mutation_prob=0.3,
-        operand_mutation_prob=0.1,
-        chromosome_length=4 + 1,  # + 1 for input gate
+        operand_mutation_prob=0.2,
+        chromosome_length=3 + 1,  # + 1 for input gate
         fitness_threshold=0.1,
         fitness_threshold_at=1,
         log_average_fitness=False,
     )
+    fitness_params = FitnessParams(qubit_num=2, measurement_qubit_num=2)
+
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard,
             X,
             CX,
             Identity,
-            BinaryEncoding.init_circuits(input_values, qubit_num),
+            BinaryEncoding.init_circuits(input_values, 2),
         ],
-        qubit_num=qubit_num,
+        qubit_num=2,
     )
 
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, qubit_num=qubit_num
+        target_distributions=target_distributions, params=fitness_params
     )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
@@ -67,7 +66,7 @@ def construct_oracle_circuit(
     else:
         print("Successfully learned oracle.")
 
-    circuit = build_circuit(chromosome, qubit_num=qubit_num)
+    circuit = build_circuit(chromosome, qubit_num=2)
     return circuit
 
 
@@ -95,9 +94,7 @@ def run_deutsch():
         fitness_threshold=0.1,
         fitness_threshold_at=10,
     )
-
-    QUBIT_NUM = 2
-    MEASUREMENT_QUBIT_NUM = 1
+    fitness_params = FitnessParams(qubit_num=2, measurement_qubit_num=1)
 
     balanced_equal_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
@@ -107,7 +104,6 @@ def run_deutsch():
             encode([1, 1]),
             encode([1, 0]),
         ],
-        qubit_num=QUBIT_NUM,
     )
     balanced_swapped_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
@@ -117,7 +113,6 @@ def run_deutsch():
             encode([1, 0]),
             encode([1, 1]),
         ],
-        qubit_num=QUBIT_NUM,
     )
     constant_0_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
@@ -127,7 +122,6 @@ def run_deutsch():
             encode([1, 0]),
             encode([1, 1]),
         ],
-        qubit_num=QUBIT_NUM,
     )
     constant_1_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
@@ -137,7 +131,6 @@ def run_deutsch():
             encode([1, 1]),
             encode([1, 0]),
         ],
-        qubit_num=QUBIT_NUM,
     )
     oracle_circuits = [
         balanced_equal_oracle_circuit,
@@ -165,15 +158,13 @@ def run_deutsch():
             X,
             Identity,
             Oracle.set_circuits(oracle_circuits),
-            BinaryEncoding.init_circuits(input_values, qubit_num=QUBIT_NUM),
+            BinaryEncoding.init_circuits(input_values, qubit_num=1),
         ],
-        qubit_num=QUBIT_NUM,
+        qubit_num=2,
     )
 
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions,
-        qubit_num=QUBIT_NUM,
-        measurement_qubit_num=MEASUREMENT_QUBIT_NUM,
+        target_distributions=target_distributions, params=fitness_params
     )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
@@ -181,7 +172,7 @@ def run_deutsch():
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
-        circuit = build_circuit(chromosome, qubit_num=QUBIT_NUM)
+        circuit = build_circuit(chromosome, qubit_num=2)
 
         print(f"\nFitness value: {fitness_value}")
         print(circuit)
