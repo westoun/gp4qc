@@ -6,7 +6,11 @@ from typing import List
 
 from gates import Gate, InputEncoding
 from .fitness import Fitness
-from .utils import build_circuit, run_circuit, aggregate_state_distribution
+from .utils import (
+    build_circuit,
+    run_circuit,
+    aggregate_state_distribution,
+)
 
 
 class MatchCount(Fitness):
@@ -28,10 +32,7 @@ class MatchCount(Fitness):
         match_count: int = 0
 
         for i, target_distribution in enumerate(self.target_distributions):
-            circuit = build_circuit(
-                chromosome,
-                qubit_num=self.qubit_num,
-            )
+            circuit = build_circuit(chromosome, qubit_num=self.qubit_num, case_index=i)
 
             state_distribution = run_circuit(circuit)
 
