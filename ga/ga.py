@@ -7,7 +7,7 @@ import warnings
 
 from .params import GAParams
 from gates import Gate, GateSet
-from .utils import init_toolbox
+from .utils import init_toolbox, remove_duplicates
 from fitness import Fitness
 
 
@@ -55,6 +55,14 @@ class GA:
                     (offspring[i],) = toolbox.operand_mutate(offspring[i])
                     del offspring[i].fitness.values
 
+            if self.params.remove_duplicates:
+                offspring = remove_duplicates(offspring)
+
+                removal_count = self.params.population_size - len(offspring)
+
+                new_individuals = toolbox.population(n=removal_count)
+                offspring.extend(new_individuals)
+
             fitnesses = list(map(toolbox.evaluate, offspring))
 
             for fit, ind in zip(fitnesses, offspring):
@@ -72,11 +80,17 @@ class GA:
                     f"Average population fitness at generation {generation}: {average_fitness}"
                 )
 
-            _, fitness_at = self.get_best_chromosomes(
-                n=self.params.fitness_threshold_at + 1
-            )[self.params.fitness_threshold_at]
-
-            if fitness_at <= self.params.fitness_threshold:
+            fitnesses = [
+                fitness
+                for (_, fitness) in self.get_best_chromosomes(
+                    n=self.params.fitness_threshold_at + 1
+                )
+            ]
+            if (
+                len(fitnesses) >= self.params.fitness_threshold_at
+                and fitnesses[self.params.fitness_threshold_at]
+                <= self.params.fitness_threshold
+            ):
                 if self.params.log_average_fitness:
                     print(
                         "\tFound good enough solution. Skipping remaining generations."
@@ -87,8 +101,13 @@ class GA:
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
         assert self._evolved_population is not None
 
-        self._evolved_population.sort(key=lambda item: item.fitness.values[0])
-        top_n_chromosomes = self._evolved_population[:n]
+        chromosomes = self._evolved_population
+
+        if self.params.remove_duplicates:
+            chromosomes = remove_duplicates(self._evolved_population)
+
+        chromosomes.sort(key=lambda item: item.fitness.values[0])
+        top_n_chromosomes = chromosomes[:n]
 
         result = [
             (chromosome, chromosome.fitness.values[0])
