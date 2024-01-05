@@ -57,6 +57,12 @@ class GA:
 
             fitnesses = list(map(toolbox.evaluate, offspring))
 
+            for fit, ind in zip(fitnesses, offspring):
+                ind.fitness.values = fit
+
+            population = toolbox.select(offspring, k=len(population))
+            self._evolved_population = population
+
             if (
                 self.params.log_average_fitness
                 and generation % self.params.log_average_fitness_at == 0
@@ -66,16 +72,10 @@ class GA:
                     f"Average population fitness at generation {generation}: {average_fitness}"
                 )
 
-            for fit, ind in zip(fitnesses, offspring):
-                ind.fitness.values = fit
-
-            population = toolbox.select(offspring, k=len(population))
-            self._evolved_population = population
-
             _, fitness_at = self.get_best_chromosomes(
                 n=self.params.fitness_threshold_at + 1
             )[self.params.fitness_threshold_at]
-            
+
             if fitness_at <= self.params.fitness_threshold:
                 if self.params.log_average_fitness:
                     print(
