@@ -24,3 +24,6 @@ class CX(Gate):
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         circuit.cx(self.controll, self.target)
         return circuit
+
+    def __repr__(self) -> str:
+        return f"cx(control={self.controll},target={self.target})"

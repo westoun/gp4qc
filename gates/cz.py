@@ -24,3 +24,6 @@ class CZ(Gate):
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         circuit.cz(self.controll, self.target)
         return circuit
+
+    def __repr__(self) -> str:
+        return f"cz(control={self.controll},target={self.target})"

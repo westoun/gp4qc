@@ -24,3 +24,6 @@ class Swap(Gate):
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         circuit.swap(self.target1, self.target2)
         return circuit
+
+    def __repr__(self) -> str:
+        return f"swap(target1={self.target1},target2={self.target2})"

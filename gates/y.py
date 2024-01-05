@@ -19,3 +19,6 @@ class Y(Gate):
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         circuit.y(self.target)
         return circuit
+
+    def __repr__(self) -> str:
+        return f"y(target={self.target})"

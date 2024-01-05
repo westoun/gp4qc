@@ -18,3 +18,6 @@ class Identity(Gate):
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         return circuit
+
+    def __repr__(self) -> str:
+        return f"id(target={self.target})"

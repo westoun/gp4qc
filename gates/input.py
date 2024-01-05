@@ -36,6 +36,9 @@ class InputEncoding(MultiCaseGate, ABC):
         circuit.append(encoding_circuit, self._targets)
         return circuit
 
+    def __repr__(self) -> str:
+        return f"input({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
+
 
 class BinaryEncoding(InputEncoding):
     @classmethod
@@ -61,3 +64,6 @@ class BinaryEncoding(InputEncoding):
 
         cls._circuits = circuits
         return cls
+
+    def __repr__(self) -> str:
+        return f"x_input({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"

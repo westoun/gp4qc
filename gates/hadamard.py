@@ -19,3 +19,6 @@ class Hadamard(Gate):
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         circuit.h(self.target)
         return circuit
+
+    def __repr__(self) -> str:
+        return f"h(target={self.target})"
