@@ -37,7 +37,7 @@ def construct_oracle_circuit(
         population_size=200,
         generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.3,
+        swap_gate_mutation_prob=0.3,
         operand_mutation_prob=0.2,
         chromosome_length=5 + 1,  # + 1 for input gate
         fitness_threshold=0,
@@ -142,7 +142,7 @@ def run_deutsch():
         population_size=100,
         generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.4,
+        swap_gate_mutation_prob=0.4,
         operand_mutation_prob=0.2,
         chromosome_length=5,
         fitness_threshold=0.1,

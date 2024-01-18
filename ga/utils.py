@@ -67,7 +67,7 @@ def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) ->
         fitness=fitness,
     )
     toolbox.register("mate", tools.cxOnePoint)
-    toolbox.register("gate_mutate", swap_gate_mutation, gate_set=gate_set, indpb=0.1)
+    toolbox.register("swap_gate_mutate", swap_gate_mutation, gate_set=gate_set, indpb=0.1)
     toolbox.register("operand_mutate", operand_mutation, indpb=0.1)
     toolbox.register("select", tools.selTournament, tournsize=3)
     return toolbox

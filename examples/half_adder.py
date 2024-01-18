@@ -52,7 +52,7 @@ def run_half_adder():
         population_size=200,
         generations=40,
         crossover_prob=0.5,
-        swap_mutation_prob=0.1,
+        swap_gate_mutation_prob=0.1,
         operand_mutation_prob=0.1,
         chromosome_length=5 + 1,  # + 1 for input layer
         fitness_threshold=0.1,

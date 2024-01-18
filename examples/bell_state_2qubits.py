@@ -18,7 +18,7 @@ def run_bell_state_2qubits():
         population_size=100,
         generations=20,
         crossover_prob=0.5,
-        swap_mutation_prob=0.1,
+        swap_gate_mutation_prob=0.1,
         operand_mutation_prob=0.4,
         chromosome_length=4,
         log_average_fitness_at=1,

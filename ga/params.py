@@ -8,7 +8,7 @@ class GAParams:
     population_size: int
     generations: int
     crossover_prob: float
-    swap_mutation_prob: float
+    swap_gate_mutation_prob: float
     operand_mutation_prob: float
     chromosome_length: int
     fitness_threshold: float = 0

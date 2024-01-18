@@ -47,8 +47,8 @@ class GA:
                     del offspring[i - 1].fitness.values, offspring[i].fitness.values
 
             for i in range(len(offspring)):
-                if random.random() < self.params.swap_mutation_prob:
-                    offspring[i] = toolbox.gate_mutate(offspring[i])
+                if random.random() < self.params.swap_gate_mutation_prob:
+                    offspring[i] = toolbox.swap_gate_mutate(offspring[i])
                     del offspring[i].fitness.values
 
             for i in range(len(offspring)):

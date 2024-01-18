@@ -18,7 +18,7 @@ def run_bell_state_3qubits():
         population_size=100,
         generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.1,
+        swap_gate_mutation_prob=0.1,
         operand_mutation_prob=0.4,
         chromosome_length=5,
         fitness_threshold=0.01,
