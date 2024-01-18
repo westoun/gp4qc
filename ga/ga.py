@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from multiprocessing import Pool
 import random
 from statistics import mean
 from typing import Any, List, Tuple
@@ -56,7 +57,9 @@ class GA:
                     del offspring[i].fitness.values
 
 
-            offspring = [toolbox.evaluate(ind) for ind in offspring]
+            # If no amount of workers is specified, os.cpu_count() is used.
+            with Pool() as pool: 
+                offspring = pool.map(toolbox.evaluate, offspring)
 
             population = toolbox.select(offspring, k=len(population))
             self._evolved_population = population

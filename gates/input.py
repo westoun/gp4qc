@@ -18,6 +18,12 @@ class InputEncoding(MultiCaseGate, ABC):
             self._circuits is not None
         ), "No circuits have been initialized. Has init_circuits() been called?"
 
+        # This re-assignment is necessary to make variables
+        # set through cls available as instance variables in
+        # a multiprocessing setup.
+        self._circuits = self._circuits
+        self._targets = self._targets
+
         # the qubit num passed to init may be different from
         # qubit num passed to init_circuits. Especially if
         # ancillary qubits are used.

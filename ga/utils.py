@@ -43,7 +43,7 @@ def operand_mutation(chromosome: List[Gate], indpb: float) -> List[Gate]:
 
 
 def evaluate_individual(chromosome: List[Gate], fitness: Fitness) -> List[Gate]:
-    fitness_score = fitness.evaluate(chromosome)
+    fitness_score = fitness.evaluate(chromosome) 
     chromosome.fitness.values = fitness_score
     return chromosome
 

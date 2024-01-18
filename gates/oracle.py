@@ -23,6 +23,12 @@ class Oracle(MultiCaseGate, ABC):
         assert self._circuits is not None, "No circuits have been provided."
         assert self._oracle_qubit_num is not None
 
+        # This re-assignment is necessary to make variables
+        # set through cls available as instance variables in
+        # a multiprocessing setup.
+        self._circuits = self._circuits
+        self._oracle_qubit_num = self._oracle_qubit_num
+
         self._qubit_num = qubit_num
 
         self.targets = sample(range(0, self._qubit_num), self._oracle_qubit_num)
