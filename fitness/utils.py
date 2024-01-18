@@ -23,6 +23,7 @@ def run_circuit(circuit: QuantumCircuit, decompose_reps: int = 5) -> List[float]
         return run_circuit(circuit, decompose_reps=decompose_reps + 1)
 
     output_state = result.get_statevector(transpiled_circuit, decimals=3)
+    output_state = output_state.reverse_qargs()
     state_distribution = output_state.probabilities().tolist()
     return state_distribution
 
