@@ -70,19 +70,3 @@ def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) ->
     toolbox.register("operand_mutate", operand_mutation, indpb=0.1)
     toolbox.register("select", tools.selTournament, tournsize=3)
     return toolbox
-
-
-def remove_duplicates(chromosomes: List[List[Gate]]) -> List[List[Gate]]:
-    unique_chromosomes = []
-    unique_reprs = set()
-
-    for chromosome in chromosomes:
-        repr = ",".join([gate.__repr__() for gate in chromosome])
-
-        if repr in unique_reprs:
-            continue
-
-        unique_chromosomes.append(chromosome)
-        unique_reprs.add(repr)
-
-    return unique_chromosomes
