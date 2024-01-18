@@ -20,7 +20,7 @@ def create_individual(container: Callable, gate_set: GateSet, chromosome_length:
 
 def swap_gate_mutation(
     chromosome: List[Gate], gate_set: GateSet, indpb: float
-) -> Tuple[List[Gate]]:
+) -> List[Gate]:
     for i in range(len(chromosome)):
         if random.random() > indpb:
             continue
@@ -28,10 +28,10 @@ def swap_gate_mutation(
         current_gate = gate_set.random_gate()
         chromosome[i] = current_gate
 
-    return (chromosome,)
+    return chromosome
 
 
-def operand_mutation(chromosome: List[Gate], indpb: float) -> Tuple[List[Gate]]:
+def operand_mutation(chromosome: List[Gate], indpb: float) -> List[Gate]:
     for i in range(len(chromosome)):
         if random.random() > indpb:
             continue
@@ -39,12 +39,13 @@ def operand_mutation(chromosome: List[Gate], indpb: float) -> Tuple[List[Gate]]:
         current_gate = chromosome[i]
         current_gate.mutate_operands()
 
-    return (chromosome,)
+    return chromosome
 
 
-def evaluate_individual(chromosome: List[Gate], fitness: Fitness) -> float:
+def evaluate_individual(chromosome: List[Gate], fitness: Fitness) -> List[Gate]:
     fitness_score = fitness.evaluate(chromosome)
-    return fitness_score
+    chromosome.fitness.values = fitness_score
+    return chromosome
 
 
 def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) -> Any:

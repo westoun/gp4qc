@@ -47,18 +47,16 @@ class GA:
 
             for i in range(len(offspring)):
                 if random.random() < self.params.swap_mutation_prob:
-                    (offspring[i],) = toolbox.gate_mutate(offspring[i])
+                    offspring[i] = toolbox.gate_mutate(offspring[i])
                     del offspring[i].fitness.values
 
             for i in range(len(offspring)):
                 if random.random() < self.params.operand_mutation_prob:
-                    (offspring[i],) = toolbox.operand_mutate(offspring[i])
+                    offspring[i] = toolbox.operand_mutate(offspring[i])
                     del offspring[i].fitness.values
 
-            fitnesses = list(map(toolbox.evaluate, offspring))
 
-            for fit, ind in zip(fitnesses, offspring):
-                ind.fitness.values = fit
+            offspring = [toolbox.evaluate(ind) for ind in offspring]
 
             population = toolbox.select(offspring, k=len(population))
             self._evolved_population = population
@@ -67,7 +65,7 @@ class GA:
                 self.params.log_average_fitness
                 and generation % self.params.log_average_fitness_at == 0
             ):
-                average_fitness = mean([fit for (fit,) in fitnesses])
+                average_fitness = mean([ind.fitness.values[0] for ind in offspring])
                 print(
                     f"Average population fitness at generation {generation}: {average_fitness}"
                 )
