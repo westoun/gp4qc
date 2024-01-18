@@ -84,5 +84,6 @@ def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) ->
     toolbox.register("swap_gate_mutate", swap_gate_mutation, gate_set=gate_set, indpb=0.1)
     toolbox.register("swap_order_mutate", swap_order_mutation, indpb=0.1)
     toolbox.register("operand_mutate", operand_mutation, indpb=0.1)
-    toolbox.register("select", tools.selTournament, tournsize=3)
+    toolbox.register("select", tools.selTournament, tournsize=2)
+    toolbox.register("select_best", tools.selBest)
     return toolbox

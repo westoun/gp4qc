@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from math import floor
 from multiprocessing import Pool
 import random
 from statistics import mean
@@ -37,6 +38,11 @@ class GA:
         population = toolbox.population(n=self.params.population_size)
 
         for generation in range(1, self.params.generations + 1):
+            if generation == 1:
+                elite = []
+            else:
+                elite = toolbox.select_best(population, k=self.params.elitism_count)
+
             offspring = [toolbox.clone(ind) for ind in population]
 
             for i in range(1, len(offspring), 2):
@@ -44,7 +50,6 @@ class GA:
                     offspring[i - 1], offspring[i] = toolbox.mate(
                         offspring[i - 1], offspring[i]
                     )
-                    del offspring[i - 1].fitness.values, offspring[i].fitness.values
 
             for i in range(len(offspring)):
                 if random.random() < self.params.swap_gate_mutation_prob:
@@ -63,14 +68,15 @@ class GA:
             with Pool() as pool: 
                 offspring = pool.map(toolbox.evaluate, offspring)
 
-            population = toolbox.select(offspring, k=len(population))
+            
+            population = elite + toolbox.select(offspring, k=self.params.population_size - len(elite))
             self._evolved_population = population
 
             if (
                 self.params.log_average_fitness
                 and generation % self.params.log_average_fitness_at == 0
             ):
-                average_fitness = mean([ind.fitness.values[0] for ind in offspring])
+                average_fitness = mean([ind.fitness.values[0] for ind in population])
                 print(
                     f"Average population fitness at generation {generation}: {average_fitness}"
                 )
