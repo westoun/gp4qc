@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import matplotlib.pyplot as plt
+import pickle
 from qiskit import QuantumCircuit
 from typing import List
 
@@ -93,8 +94,7 @@ def encode(states: List[int]) -> List[int]:
     encoding[encoding_index] = 1
     return encoding
 
-
-def run_deutsch():
+def create_oracle_circuits():
     balanced_equal_oracle_circuit = construct_oracle_circuit(
         [[0, 0], [0, 1], [1, 0], [1, 1]],
         [
@@ -137,13 +137,25 @@ def run_deutsch():
         constant_0_oracle_circuit,
         constant_1_oracle_circuit,
     ]
+    return oracle_circuits
+
+
+def run_deutsch():
+    # oracle_circuits = create_oracle_circuits()
+
+    # with open("tmp/deutsch_oracle.pickle", "wb") as oracle_file:
+    #     pickle.dump(oracle_circuits, oracle_file)
+
+    with open("tmp/deutsch_oracle.pickle", "rb") as oracle_file:
+        oracle_circuits = pickle.load(oracle_file)
 
     ga_params = GAParams(
         population_size=100,
-        generations=50,
+        generations=80,
         crossover_prob=0.5,
-        swap_gate_mutation_prob=0.4,
-        operand_mutation_prob=0.2,
+        swap_gate_mutation_prob=0.1,
+        swap_order_mutation_prob=0.2,
+        operand_mutation_prob=0,
         chromosome_length=5,
         fitness_threshold=0.1,
     )
@@ -167,6 +179,7 @@ def run_deutsch():
             Hadamard,
             X,
             Identity,
+            Swap,
             Oracle.set_circuits(oracle_circuits),
         ],
         qubit_num=2,
