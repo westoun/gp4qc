@@ -37,11 +37,10 @@ def construct_oracle_circuit(
         population_size=200,
         generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.4,
+        swap_mutation_prob=0.3,
         operand_mutation_prob=0.2,
-        chromosome_length=4 + 1,  # + 1 for input gate
-        fitness_threshold=0.1,
-        fitness_threshold_at=1,
+        chromosome_length=5 + 1,  # + 1 for input gate
+        fitness_threshold=0,
         log_average_fitness=False,
     )
     fitness_params = FitnessParams(
@@ -143,11 +142,10 @@ def run_deutsch():
         population_size=100,
         generations=50,
         crossover_prob=0.5,
-        swap_mutation_prob=0.3,
+        swap_mutation_prob=0.4,
         operand_mutation_prob=0.2,
-        chromosome_length=4 + 1,  # + 1 for encoding layer
+        chromosome_length=5,
         fitness_threshold=0.1,
-        fitness_threshold_at=10,
     )
     fitness_params = FitnessParams(
         qubit_num=2,
@@ -186,6 +184,7 @@ def run_deutsch():
         circuit = build_circuit(chromosome, qubit_num=2)
 
         print(f"\nFitness value: {fitness_value}")
+        print(chromosome)
         print(circuit)
 
         # circuit.draw("mpl")

@@ -22,7 +22,6 @@ def run_bell_state_3qubits():
         operand_mutation_prob=0.4,
         chromosome_length=5,
         fitness_threshold=0.01,
-        fitness_threshold_at=1,
         log_average_fitness_at=1,
     )
     fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=3)

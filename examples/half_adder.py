@@ -56,7 +56,6 @@ def run_half_adder():
         operand_mutation_prob=0.1,
         chromosome_length=5 + 1,  # + 1 for input layer
         fitness_threshold=0.1,
-        fitness_threshold_at=1,
         log_average_fitness_at=1,
     )
 
