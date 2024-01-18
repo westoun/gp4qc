@@ -9,8 +9,9 @@ class GAParams:
     generations: int
     crossover_prob: float
     swap_gate_mutation_prob: float
-    operand_mutation_prob: float
     chromosome_length: int
+    operand_mutation_prob: float = 0
+    swap_order_mutation_prob: float = 0 
     fitness_threshold: float = 0
     fitness_threshold_at: int = 0
     log_average_fitness: bool = True 

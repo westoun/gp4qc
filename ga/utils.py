@@ -30,6 +30,20 @@ def swap_gate_mutation(
 
     return chromosome
 
+def swap_order_mutation(chromosome: List[Gate], indpb: float
+) -> List[Gate]:
+    
+    for gate1_i in range(len(chromosome)):
+        if random.random() > indpb:
+            continue
+
+        gate2_i = random.randint(0, len(chromosome) - 1)
+
+        tmp = chromosome[gate2_i]
+        chromosome[gate1_i] = chromosome[gate1_i]
+        chromosome[gate2_i] = tmp
+
+    return chromosome
 
 def operand_mutation(chromosome: List[Gate], indpb: float) -> List[Gate]:
     for i in range(len(chromosome)):
@@ -68,6 +82,7 @@ def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) ->
     )
     toolbox.register("mate", tools.cxOnePoint)
     toolbox.register("swap_gate_mutate", swap_gate_mutation, gate_set=gate_set, indpb=0.1)
+    toolbox.register("swap_order_mutate", swap_order_mutation, indpb=0.1)
     toolbox.register("operand_mutate", operand_mutation, indpb=0.1)
     toolbox.register("select", tools.selTournament, tournsize=3)
     return toolbox

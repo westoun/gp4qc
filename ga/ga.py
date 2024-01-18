@@ -49,12 +49,14 @@ class GA:
             for i in range(len(offspring)):
                 if random.random() < self.params.swap_gate_mutation_prob:
                     offspring[i] = toolbox.swap_gate_mutate(offspring[i])
-                    del offspring[i].fitness.values
 
             for i in range(len(offspring)):
                 if random.random() < self.params.operand_mutation_prob:
                     offspring[i] = toolbox.operand_mutate(offspring[i])
-                    del offspring[i].fitness.values
+            
+            for i in range(len(offspring)):
+                if random.random() < self.params.swap_order_mutation_prob:
+                    offspring[i] = toolbox.swap_order_mutate(offspring[i])
 
 
             # If no amount of workers is specified, os.cpu_count() is used.
