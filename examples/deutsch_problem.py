@@ -101,7 +101,7 @@ def create_oracle_circuits():
             encode([0, 0]),
             encode([0, 1]),
             encode([1, 1]),
-            encode([1, 0]),
+            encode([1, 0]), 
         ],
     )
     balanced_swapped_oracle_circuit = construct_oracle_circuit(
@@ -142,7 +142,6 @@ def create_oracle_circuits():
 
 def run_deutsch():
     # oracle_circuits = create_oracle_circuits()
-
     # with open("tmp/deutsch_oracle.pickle", "wb") as oracle_file:
     #     pickle.dump(oracle_circuits, oracle_file)
 
@@ -150,14 +149,15 @@ def run_deutsch():
         oracle_circuits = pickle.load(oracle_file)
 
     ga_params = GAParams(
-        population_size=100,
-        generations=80,
+        population_size=1000,
+        generations=100,
         crossover_prob=0.5,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.2,
-        operand_mutation_prob=0,
-        chromosome_length=5,
+        operand_mutation_prob=0.1,
+        chromosome_length=6,
         fitness_threshold=0.1,
+        elitism_percentage=0.01
     )
     fitness_params = FitnessParams(
         qubit_num=2,
@@ -180,6 +180,11 @@ def run_deutsch():
             X,
             Identity,
             Swap,
+            # Y,
+            # Z,
+            # CX,
+            # CY,
+            # CZ,
             Oracle.set_circuits(oracle_circuits),
         ],
         qubit_num=2,

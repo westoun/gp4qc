@@ -1,3 +1,4 @@
+import numpy as np 
 from typing import List
 
 from gates import (
@@ -25,10 +26,10 @@ from fitness.validity_checks import has_exactly_1_input
 def run_half_adder():
     input_values: List[List[int]] = [[0, 0], [0, 1], [1, 0], [1, 1]]
     target_distributions: List[List[float]] = [
-        [1, 0, 0, 0],  # 00 => 00
-        [0, 1, 0, 0],  # 01 => 01
-        [0, 1, 0, 0],  # 10 => 01
-        [0, 0, 1, 0],  # 11 => 10
+        np.kron([1, 0], [1, 0]),# 00 => 00
+        np.kron([1, 0], [0, 1]),# 01 => 01
+        np.kron([1, 0], [0, 1]),# 10 => 01
+        np.kron([0, 1], [1, 0]),# 11 => 10
     ]
 
     gate_set: GateSet = GateSet(
@@ -53,6 +54,7 @@ def run_half_adder():
         generations=40,
         crossover_prob=0.5,
         swap_gate_mutation_prob=0.1,
+        swap_order_mutation_prob=0.1,
         operand_mutation_prob=0.1,
         chromosome_length=5 + 1,  # + 1 for input layer
         fitness_threshold=0.1,
