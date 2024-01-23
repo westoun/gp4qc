@@ -13,3 +13,4 @@ from .input import InputEncoding, BinaryEncoding
 from .ccx import CCX
 from .oracle import Oracle
 from .multicase_gate import MultiCaseGate
+from .ccz import CCZ
