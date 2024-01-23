@@ -2,7 +2,7 @@
 
 from scipy.spatial import distance
 from statistics import mean
-from typing import List
+from typing import List, Tuple
 
 from gates import Gate, InputEncoding
 from .fitness import Fitness
@@ -22,7 +22,7 @@ class MatchCount(Fitness):
 
         self.params = params
 
-    def evaluate(self, chromosome: List[Gate]) -> float:
+    def evaluate(self, chromosome: List[Gate]) -> Tuple[List[Gate], float]:
         match_count: int = 0
 
         for i, target_distribution in enumerate(self.target_distributions):
@@ -58,4 +58,4 @@ class MatchCount(Fitness):
                 error += 100
                 break
 
-        return (error,)
+        return chromosome, error

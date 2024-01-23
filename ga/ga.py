@@ -64,6 +64,8 @@ class GA:
                     offspring[i] = toolbox.swap_order_mutate(offspring[i])
 
 
+
+
             # If no amount of workers is specified, os.cpu_count() is used.
             with Pool() as pool: 
                 offspring = pool.map(toolbox.evaluate, offspring)

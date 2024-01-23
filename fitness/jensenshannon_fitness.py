@@ -2,7 +2,7 @@
 
 from scipy.spatial import distance
 from statistics import mean
-from typing import List
+from typing import List, Tuple
 
 from gates import Gate, InputEncoding
 from .fitness import Fitness
@@ -18,7 +18,7 @@ class Jensensshannon(Fitness):
 
         self.params = params
 
-    def evaluate(self, chromosome: List[Gate]) -> float:
+    def evaluate(self, chromosome: List[Gate]) -> Tuple[List[Gate], float]:
         errors: List[float] = []
 
         for i, target_distribution in enumerate(self.target_distributions):
@@ -50,4 +50,4 @@ class Jensensshannon(Fitness):
                 error += 100
                 break
 
-        return (error,)
+        return chromosome, error
