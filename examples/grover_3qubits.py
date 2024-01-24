@@ -9,7 +9,7 @@ from typing import List
 from gates import Gate, GateSet, Hadamard, CX, CY, CZ, Identity, X, Y, Z, \
     Swap, CCX, CCZ, Oracle, HadamardLayer
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams, SpectorFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -42,7 +42,7 @@ def state_to_distribution(target_state: List[int]) -> List[float]:
     for vector in vectors[1:]:
         distribution = np.kron(distribution, vector)
 
-    return distribution
+    return distribution.tolist()
 
 
 def run_grover():
@@ -75,8 +75,8 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=1000,
-        generations=20,
+        population_size=500,
+        generations=10,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.1,
@@ -86,9 +86,12 @@ def run_grover():
     )
     fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=3, validity_checks=[uses_oracle, uses_hadamard_layer])
 
-    fitness: Fitness = Jensensshannon(
+    fitness: Fitness = SpectorFitness(
         target_distributions=target_distributions, params=fitness_params
     )
+    # fitness: Fitness = Jensensshannon(
+    #     target_distributions=target_distributions, params=fitness_params
+    # )
 
     genetic_algorithm = GA(gate_set, fitness, params=ga_params)
     genetic_algorithm.run()
