@@ -7,20 +7,21 @@ from statistics import mean
 from typing import Any, List, Tuple
 import warnings
 
-from .params import GAParams
+from .params import GAParams, default_params
 from gates import Gate, GateSet
 from .utils import init_toolbox
 from fitness import Fitness
-
+from optimizer import Optimizer
 
 class GA:
     """Wrapper class for the genetic algorithm code."""
 
     _evolved_population: List[Gate] = None
 
-    def __init__(self, gate_set: GateSet, fitness: Fitness, params: GAParams) -> None:
+    def __init__(self, gate_set: GateSet, fitness: Fitness, optimizer: Optimizer, params: GAParams = default_params) -> None:
         self.gate_set = gate_set
         self.fitness = fitness
+        self.optimizer = optimizer
         self.params = params
 
     def __call__(self):
@@ -32,7 +33,7 @@ class GA:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             toolbox = init_toolbox(
-                self.gate_set, self.params.chromosome_length, self.fitness
+                self.gate_set, self.params.chromosome_length, self.fitness, self.optimizer
             )
 
         population = toolbox.population(n=self.params.population_size)

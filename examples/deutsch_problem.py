@@ -23,12 +23,14 @@ from gates import (
     Oracle,
 )
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness import Fitness, Jensensshannon, FitnessParams
 from fitness.validity_checks import (
     has_exactly_1_input,
     has_exactly_1_oracle,
     has_input_at_first_position,
 )
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
+
 
 
 def construct_oracle_circuit(
@@ -44,11 +46,6 @@ def construct_oracle_circuit(
         fitness_threshold=0,
         log_average_fitness=False,
     )
-    fitness_params = FitnessParams(
-        qubit_num=2,
-        measurement_qubit_num=2,
-        validity_checks=[has_exactly_1_input, has_input_at_first_position],
-    )
 
     gate_set: GateSet = GateSet(
         gates=[
@@ -60,11 +57,18 @@ def construct_oracle_circuit(
         qubit_num=2,
     )
 
+
+    fitness_params = FitnessParams(
+        validity_checks=[has_exactly_1_input, has_input_at_first_position],
+    )
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, params=fitness_params
+        params=fitness_params
     )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+    optimizer_params = OptimizerParams(qubit_num=2, measurement_qubit_num=2)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     chromosome, fitness_value = genetic_algorithm.get_best_chromosomes(n=1)[0]
@@ -159,13 +163,6 @@ def run_deutsch():
         fitness_threshold=0.1,
         elitism_percentage=0.01
     )
-    fitness_params = FitnessParams(
-        qubit_num=2,
-        measurement_qubit_num=1,
-        validity_checks=[
-            has_exactly_1_oracle,
-        ],
-    )
 
     target_distributions: List[List[float]] = [
         [0, 1],  # balanced equal
@@ -190,11 +187,20 @@ def run_deutsch():
         qubit_num=2,
     )
 
+    fitness_params = FitnessParams(
+        validity_checks=[
+            has_exactly_1_oracle,
+        ],
+    )
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, params=fitness_params
+        params=fitness_params
     )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+
+    optimizer_params = OptimizerParams(qubit_num=2, measurement_qubit_num=1)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3

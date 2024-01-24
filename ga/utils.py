@@ -6,6 +6,7 @@ from typing import Any, List, Callable, Tuple
 
 from gates import Gate, GateSet
 from fitness import Fitness
+from optimizer import Optimizer
 
 
 def create_individual(container: Callable, gate_set: GateSet, chromosome_length: int):
@@ -56,13 +57,13 @@ def operand_mutation(chromosome: List[Gate], indpb: float) -> List[Gate]:
     return chromosome
 
 
-def evaluate_individual(chromosome: List[Gate], fitness: Fitness) -> List[Gate]:
-    chromosome, fitness_score = fitness.evaluate(chromosome) 
+def evaluate_individual(chromosome: List[Gate], fitness: Fitness, optimizer: Optimizer) -> List[Gate]:
+    chromosome, fitness_score = optimizer.optimize(chromosome, fitness) 
     chromosome.fitness.values = (fitness_score,)
     return chromosome
 
 
-def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) -> Any:
+def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness, optimizer: Optimizer) -> Any:
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMin)
 
@@ -79,6 +80,7 @@ def init_toolbox(gate_set: GateSet, chromosome_length: int, fitness: Fitness) ->
         "evaluate",
         evaluate_individual,
         fitness=fitness,
+        optimizer=optimizer
     )
     toolbox.register("mate", tools.cxOnePoint)
     toolbox.register("swap_gate_mutate", swap_gate_mutation, gate_set=gate_set, indpb=0.1)

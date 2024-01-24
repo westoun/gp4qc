@@ -19,8 +19,9 @@ from gates import (
 )
 
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness import Fitness, Jensensshannon, FitnessParams
 from fitness.validity_checks import has_exactly_1_input
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
 
 
 def run_half_adder():
@@ -62,14 +63,17 @@ def run_half_adder():
     )
 
     fitness_params = FitnessParams(
-        qubit_num=3, measurement_qubit_num=2, validity_checks=[has_exactly_1_input]
+        validity_checks=[has_exactly_1_input]
     )
-
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, params=fitness_params
+        params=fitness_params
     )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=2)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3

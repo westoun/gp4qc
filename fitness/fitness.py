@@ -13,10 +13,11 @@ class Fitness(ABC):
 
     @abstractmethod
     def __init__(
-        self, target_distributions: List[List[float]], params: FitnessParams
+        self, params: FitnessParams
     ) -> None:
         ...
 
     @abstractmethod
-    def evaluate(self, chromosome: List[Gate]) -> Tuple[List[Gate], float]:
+    def evaluate(self, state_distributions: List[List[float]], target_distributions: List[List[float]], 
+                 chromosome: List[Gate]) -> float:
         ...

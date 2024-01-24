@@ -5,11 +5,8 @@ from typing import List, Callable
 
 from gates import Gate
 
-
 @dataclass
 class FitnessParams:
-    qubit_num: int
-    measurement_qubit_num: int
     # validity checks identify invalid chromosomes.
     # based on these checks, fitness functions can decrease
     # the likelyhood of invalid chromosomes to pass on to the
@@ -17,3 +14,5 @@ class FitnessParams:
     validity_checks: List[Callable[[List[Gate]], bool]] = field(
         default_factory=lambda: []
     )
+
+default_params: FitnessParams = FitnessParams()

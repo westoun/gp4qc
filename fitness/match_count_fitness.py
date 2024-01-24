@@ -6,38 +6,20 @@ from typing import List, Tuple
 
 from gates import Gate, InputEncoding
 from .fitness import Fitness
-from .utils import (
-    build_circuit,
-    run_circuit,
-    aggregate_state_distribution,
-)
-from .params import FitnessParams
+from .params import FitnessParams, default_params
 
 
 class MatchCount(Fitness):
     def __init__(
-        self, target_distributions: List[List[float]], params: FitnessParams
+        self, params: FitnessParams = default_params
     ) -> None:
-        self.target_distributions = target_distributions
-
         self.params = params
 
-    def evaluate(self, chromosome: List[Gate]) -> Tuple[List[Gate], float]:
+    def evaluate(self, state_distributions: List[List[float]], target_distributions: List[List[float]], 
+                 chromosome: List[Gate]) -> float:
         match_count: int = 0
 
-        for i, target_distribution in enumerate(self.target_distributions):
-            circuit = build_circuit(
-                chromosome, qubit_num=self.params.qubit_num, case_index=i
-            )
-
-            state_distribution = run_circuit(circuit)
-
-            state_distribution = aggregate_state_distribution(
-                state_distribution,
-                measurement_qubit_num=self.params.measurement_qubit_num,
-                ancillary_num=self.params.qubit_num - self.params.measurement_qubit_num,
-            )
-
+        for state_distribution, target_distribution in zip(state_distributions, target_distributions):
             assert len(state_distribution) == len(target_distribution)
 
             match_index = target_distribution.index(1.0)
@@ -49,8 +31,8 @@ class MatchCount(Fitness):
             if probability > 0.5:
                 match_count += 1
 
-        error = (len(self.target_distributions) - match_count) / len(
-            self.target_distributions
+        error = (len(target_distributions) - match_count) / len(
+            target_distributions
         )
 
         for validity_check in self.params.validity_checks:
@@ -58,4 +40,4 @@ class MatchCount(Fitness):
                 error += 100
                 break
 
-        return chromosome, error
+        return error

@@ -5,7 +5,8 @@ from typing import List
 
 from gates import Gate, GateSet, Hadamard, X, Y, Z, CX, CY, CZ, Identity
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness import Fitness, Jensensshannon, FitnessParams
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
 
 
 def run_bell_state_3qubits():
@@ -17,20 +18,22 @@ def run_bell_state_3qubits():
     ga_params = GAParams(
         population_size=100,
         generations=50,
-        crossover_prob=0.5,
-        swap_gate_mutation_prob=0.1,
-        operand_mutation_prob=0.4,
-        chromosome_length=5,
+        crossover_prob=0.4,
+        swap_gate_mutation_prob=0.2,
+        swap_order_mutation_prob=0.1,
+        operand_mutation_prob=0.1,
+        chromosome_length=4,
         fitness_threshold=0.01,
         log_average_fitness_at=1,
     )
-    fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=3)
 
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, params=fitness_params
     )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3

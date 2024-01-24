@@ -6,7 +6,8 @@ from typing import List
 from gates import Gate, GateSet, Hadamard, X, Y, Z, CX, CY, CZ, CCX, \
     CCZ, Swap, Identity
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams
+from fitness import Fitness, Jensensshannon, FitnessParams
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
 
 
 def run_create_probability_distribution():
@@ -24,13 +25,14 @@ def run_create_probability_distribution():
         log_average_fitness_at=5,
         fitness_threshold=0.1
     )
-    fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=2)
 
     fitness: Fitness = Jensensshannon(
-        target_distributions=target_distributions, params=fitness_params
     )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=2)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3

@@ -9,8 +9,10 @@ from typing import List
 from gates import Gate, GateSet, Hadamard, CX, CY, CZ, Identity, X, Y, Z, \
     Swap, CCX, CCZ, Oracle, HadamardLayer
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, build_circuit, FitnessParams, SpectorFitness
+from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
+
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
     # Circuit design taken from 
@@ -84,16 +86,16 @@ def run_grover():
         chromosome_length=10,
         log_average_fitness_at=1,
     )
-    fitness_params = FitnessParams(qubit_num=3, measurement_qubit_num=3, validity_checks=[uses_oracle, uses_hadamard_layer])
 
+    fitness_params = FitnessParams(validity_checks=[uses_oracle, uses_hadamard_layer])
     fitness: Fitness = SpectorFitness(
-        target_distributions=target_distributions, params=fitness_params
+        params=fitness_params
     )
-    # fitness: Fitness = Jensensshannon(
-    #     target_distributions=target_distributions, params=fitness_params
-    # )
 
-    genetic_algorithm = GA(gate_set, fitness, params=ga_params)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
+    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+
+    genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
     genetic_algorithm.run()
 
     TOP_N = 3

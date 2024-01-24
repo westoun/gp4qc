@@ -5,17 +5,18 @@ from typing import List, Tuple
 
 from fitness import Fitness
 from gates import Gate
+from .params import OptimizerParams
 
-class Optimizer(Fitness, ABC):
-    """Wrapper class around Fitness, used to optimize a 
-    circuit based on the specified fitness function class.
+class Optimizer(ABC):
+    """
     """
 
     def __init__(
-        self, fitness: Fitness
+        self, target_distributions: List[List[float]], params: OptimizerParams
     ) -> None:
-        self.fitness = fitness 
+        self.target_distributions = target_distributions
+        self.params = params
 
     @abstractmethod
-    def evaluate(self, chromosome: List[Gate]) -> Tuple[List[Gate], float]:
+    def optimize(self, chromosome: List[Gate], fitness: Fitness) -> Tuple[List[Gate], float]:
         ...
