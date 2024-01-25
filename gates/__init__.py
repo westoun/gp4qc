@@ -15,3 +15,5 @@ from .oracle import Oracle
 from .multicase_gate import MultiCaseGate
 from .ccz import CCZ
 from .hadamard_layer import HadamardLayer
+from .optimizable import OptimizableGate, RY, RX, RZ, \
+    CRY, CRZ, CRX, Phase

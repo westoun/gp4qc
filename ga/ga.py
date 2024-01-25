@@ -13,12 +13,19 @@ from .utils import init_toolbox
 from fitness import Fitness
 from optimizer import Optimizer
 
+
 class GA:
     """Wrapper class for the genetic algorithm code."""
 
-    _evolved_population: List[Gate] = None
+    evolved_population: List[Gate] = None
 
-    def __init__(self, gate_set: GateSet, fitness: Fitness, optimizer: Optimizer, params: GAParams = default_params) -> None:
+    def __init__(
+        self,
+        gate_set: GateSet,
+        fitness: Fitness,
+        optimizer: Optimizer,
+        params: GAParams = default_params,
+    ) -> None:
         self.gate_set = gate_set
         self.fitness = fitness
         self.optimizer = optimizer
@@ -33,7 +40,10 @@ class GA:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             toolbox = init_toolbox(
-                self.gate_set, self.params.chromosome_length, self.fitness, self.optimizer
+                self.gate_set,
+                self.params.chromosome_length,
+                self.fitness,
+                self.optimizer,
             )
 
         population = toolbox.population(n=self.params.population_size)
@@ -59,21 +69,19 @@ class GA:
             for i in range(len(offspring)):
                 if random.random() < self.params.operand_mutation_prob:
                     offspring[i] = toolbox.operand_mutate(offspring[i])
-            
+
             for i in range(len(offspring)):
                 if random.random() < self.params.swap_order_mutation_prob:
                     offspring[i] = toolbox.swap_order_mutate(offspring[i])
 
-
-
-
             # If no amount of workers is specified, os.cpu_count() is used.
-            with Pool() as pool: 
+            with Pool() as pool:
                 offspring = pool.map(toolbox.evaluate, offspring)
 
-            
-            population = elite + toolbox.select(offspring, k=self.params.population_size - len(elite))
-            self._evolved_population = population
+            population = elite + toolbox.select(
+                offspring, k=self.params.population_size - len(elite)
+            )
+            self.evolved_population = population
 
             if (
                 self.params.log_average_fitness
@@ -97,10 +105,10 @@ class GA:
                 return
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
-        assert self._evolved_population is not None
+        assert self.evolved_population is not None
 
-        self._evolved_population.sort(key=lambda item: item.fitness.values[0])
-        top_n_chromosomes = self._evolved_population[:n]
+        self.evolved_population.sort(key=lambda item: item.fitness.values[0])
+        top_n_chromosomes = self.evolved_population[:n]
 
         result = [
             (chromosome, chromosome.fitness.values[0])
