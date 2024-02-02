@@ -6,6 +6,7 @@ from .gate import Gate
 
 
 class HadamardLayer(Gate):
+    name: str = "h_layer"
 
     def __init__(self, qubit_num: int):
         self._qubit_num = qubit_num
@@ -19,4 +20,4 @@ class HadamardLayer(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"h_layer()"
+        return f"{self.name}()"

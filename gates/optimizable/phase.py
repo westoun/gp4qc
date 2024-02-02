@@ -9,6 +9,8 @@ from .optimizable_gate import OptimizableGate
 
 
 class Phase(OptimizableGate):
+    name: str = "phase_shift"
+
     target: int
     theta: float
 
@@ -28,7 +30,7 @@ class Phase(OptimizableGate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"phase_shift(theta={self.theta},target={self.target})"
+        return f"{self.name}(theta={self.theta},target={self.target})"
 
     @property
     def params(self) -> List[float]:

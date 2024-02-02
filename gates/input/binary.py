@@ -6,6 +6,8 @@ from typing import List
 from .input import InputEncoding
 
 class BinaryEncoding(InputEncoding):
+    name: str = "x_input"
+
     @classmethod
     def init_circuits(
         cls, input_values: List[List[int]], qubit_num: int
@@ -31,4 +33,4 @@ class BinaryEncoding(InputEncoding):
         return cls
 
     def __repr__(self) -> str:
-        return f"x_input({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
+        return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"

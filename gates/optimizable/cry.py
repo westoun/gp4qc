@@ -9,6 +9,8 @@ from .optimizable_gate import OptimizableGate
 
 
 class CRY(OptimizableGate):
+    name: str = "cry"
+
     control: int
     target: int
     theta: float
@@ -33,7 +35,7 @@ class CRY(OptimizableGate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"cry(theta={self.theta},control={self.control},target={self.target})"
+        return f"{self.name}(theta={self.theta},control={self.control},target={self.target})"
 
     @property
     def params(self) -> List[float]:

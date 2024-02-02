@@ -8,7 +8,7 @@ from gates.multicase_gate import MultiCaseGate
 
 
 class InputEncoding(MultiCaseGate, ABC):
-    """ """
+    name: str = "input" 
 
     _circuits: List[QuantumCircuit] = None
     _targets: List[int] = None
@@ -43,5 +43,5 @@ class InputEncoding(MultiCaseGate, ABC):
         return circuit
 
     def __repr__(self) -> str:
-        return f"input({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
+        return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
 

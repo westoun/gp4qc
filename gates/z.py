@@ -7,6 +7,8 @@ from .gate import Gate
 
 
 class Z(Gate):
+    name: str = "z"
+
     target: int
 
     def __init__(self, qubit_num: int):
@@ -21,4 +23,4 @@ class Z(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"z(target={self.target})"
+        return f"{self.name}(target={self.target})"

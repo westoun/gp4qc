@@ -7,6 +7,8 @@ from .gate import Gate
 
 
 class Swap(Gate):
+    name: str = "swap"
+
     target1: int
     target2: int
 
@@ -26,4 +28,4 @@ class Swap(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"swap(target1={self.target1},target2={self.target2})"
+        return f"{self.name}(target1={self.target1},target2={self.target2})"

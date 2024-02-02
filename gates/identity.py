@@ -7,6 +7,8 @@ from .gate import Gate
 
 
 class Identity(Gate):
+    name: str = "id"
+
     target: int
 
     def __init__(self, qubit_num: int):
@@ -20,4 +22,4 @@ class Identity(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"id(target={self.target})"
+        return f"{self.name}(target={self.target})"

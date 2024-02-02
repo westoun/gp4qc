@@ -9,7 +9,7 @@ from .multicase_gate import MultiCaseGate
 
 
 class Oracle(MultiCaseGate, ABC):
-    """ """
+    name: str = "oracle"
 
     _circuits: List[QuantumCircuit] = None
     _oracle_qubit_num: int = None
@@ -48,4 +48,4 @@ class Oracle(MultiCaseGate, ABC):
         return cls
 
     def __repr__(self) -> str:
-        return f"oracle({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self.targets)])})"
+        return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self.targets)])})"

@@ -7,6 +7,8 @@ from .gate import Gate
 
 
 class Hadamard(Gate):
+    name: str = "h"
+
     target: int
 
     def __init__(self, qubit_num: int):
@@ -21,4 +23,4 @@ class Hadamard(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"h(target={self.target})"
+        return f"{self.name}(target={self.target})"

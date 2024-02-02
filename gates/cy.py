@@ -7,6 +7,8 @@ from .gate import Gate
 
 
 class CY(Gate):
+    name: str = "cy"
+
     controll: int
     target: int
 
@@ -26,4 +28,4 @@ class CY(Gate):
         return circuit
 
     def __repr__(self) -> str:
-        return f"cy(control={self.controll},target={self.target})"
+        return f"{self.name}(control={self.controll},target={self.target})"

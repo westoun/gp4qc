@@ -1,6 +1,6 @@
 #!/usr/bin/env pyton3
 
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractclassmethod
 from qiskit import QuantumCircuit
 
 
@@ -27,3 +27,8 @@ class Gate(ABC):
 
     def __str__(self) -> str:
         return self.__repr__()
+
+    @property
+    @abstractclassmethod
+    def name() -> str:
+        ...
