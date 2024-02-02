@@ -4,7 +4,7 @@ from math import floor
 from multiprocessing import Pool
 import random
 from statistics import mean
-from typing import Any, List, Tuple
+from typing import Any, List, Tuple, Callable
 import warnings
 
 from .params import GAParams, default_params
@@ -18,6 +18,7 @@ class GA:
     """Wrapper class for the genetic algorithm code."""
 
     evolved_population: List[Gate] = None
+    _after_generation_callbacks: List[Callable] = []
 
     def __init__(
         self,
@@ -30,6 +31,9 @@ class GA:
         self.fitness = fitness
         self.optimizer = optimizer
         self.params = params
+
+    def on_after_generation(self, callback: Callable) -> None:
+        self._after_generation_callbacks.append(callback)
 
     def __call__(self):
         return self.run()
@@ -92,6 +96,12 @@ class GA:
                     f"Average population fitness at generation {generation}: {average_fitness}"
                 )
 
+            # Call callbacks
+            fitness_values = [chromosome.fitness.values[0] for chromosome in population]
+            for callback in self._after_generation_callbacks:
+                callback(population, fitness_values, generation)
+
+            # Check early abort condition (fitness value at.)
             _, fitness_at = self.get_best_chromosomes(
                 n=self.params.fitness_threshold_at + 1
             )[self.params.fitness_threshold_at]
