@@ -43,12 +43,12 @@ def run_create_probability_distribution():
     )
     target_distributions: List[List[float]] = [[1 / 6, 1 / 6, 1 / 6, 0.5]]
     ga_params = GAParams(
-        population_size=100,
-        generations=20,
+        population_size=200,
+        generations=50,
         crossover_prob=0.4,
-        swap_gate_mutation_prob=0.1,
+        swap_gate_mutation_prob=0.2,
         swap_order_mutation_prob=0.1,
-        chromosome_length=4,
+        chromosome_length=5,
         log_average_fitness_at=1,
         fitness_threshold=0.08,
     )
