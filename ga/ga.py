@@ -17,8 +17,9 @@ from optimizer import Optimizer
 class GA:
     """Wrapper class for the genetic algorithm code."""
 
-    evolved_population: List[Gate] = None
+    evolved_population: List[Gate] = []
     _after_generation_callbacks: List[Callable] = []
+    _on_completion_callbacks: List[Callable] = []
 
     def __init__(
         self,
@@ -34,6 +35,9 @@ class GA:
 
     def on_after_generation(self, callback: Callable) -> None:
         self._after_generation_callbacks.append(callback)
+
+    def on_completion(self, callback: Callable) -> None:
+        self._on_completion_callbacks.append(callback)
 
     def __call__(self):
         return self.run()
@@ -99,7 +103,7 @@ class GA:
             # Call callbacks
             fitness_values = [chromosome.fitness.values[0] for chromosome in population]
             for callback in self._after_generation_callbacks:
-                callback(population, fitness_values, generation)
+                callback(self, population, fitness_values, generation)
 
             # Check early abort condition (fitness value at.)
             _, fitness_at = self.get_best_chromosomes(
@@ -112,7 +116,13 @@ class GA:
                         "\tFound good enough solution. Skipping remaining generations."
                     )
 
-                return
+                break
+
+        fitness_values = [
+            chromosome.fitness.values[0] for chromosome in self.evolved_population
+        ]
+        for callback in self._on_completion_callbacks:
+            callback(self, population, fitness_values, generation)
 
     def get_best_chromosomes(self, n: int = 1) -> List[Tuple[List[Gate], float]]:
         assert self.evolved_population is not None
