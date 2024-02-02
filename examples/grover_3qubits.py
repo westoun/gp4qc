@@ -78,7 +78,7 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=100, # 500
+        population_size=500,
         generations=10,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
@@ -101,6 +101,7 @@ def run_grover():
     average_fitness_values = []
     generations = []
     def log_fitness_callback(population: List[List[Gate]], fitness_values: List[float], generation: int) -> None:
+        fitness_values = [value % 100 for value in fitness_values]
         average_fitness = mean(fitness_values)
         average_fitness_values.append(average_fitness)
         generations.append(generation)
