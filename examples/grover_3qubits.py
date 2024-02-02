@@ -4,11 +4,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from qiskit import QuantumCircuit
-from statistics import mean 
+from statistics import mean
 from typing import List
 
-from gates import Gate, GateSet, Hadamard, CX, CY, CZ, Identity, X, Y, Z, \
-    Swap, CCX, CCZ, Oracle, HadamardLayer
+from gates import (
+    Gate,
+    GateSet,
+    Hadamard,
+    CX,
+    CY,
+    CZ,
+    Identity,
+    X,
+    Y,
+    Z,
+    Swap,
+    CCX,
+    CCZ,
+    Oracle,
+    HadamardLayer,
+)
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
@@ -16,9 +31,9 @@ from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circ
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
-    # Circuit design taken from 
+    # Circuit design taken from
     # https://quantumcomputing.stackexchange.com/q/8850
-    
+
     circuit = QuantumCircuit(len(target_state))
 
     for i, qubit_state in enumerate(target_state):
@@ -33,13 +48,14 @@ def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
 
     return circuit
 
+
 def state_to_distribution(target_state: List[int]) -> List[float]:
     vectors = []
     for qubit_state in target_state:
         if qubit_state == 0:
-            vectors.append([1, 0]) 
+            vectors.append([1, 0])
         else:
-            vectors.append([0, 1]) 
+            vectors.append([0, 1])
 
     distribution = vectors[0]
     for vector in vectors[1:]:
@@ -65,16 +81,25 @@ def run_grover():
         oracle_circuit = construct_oracle_circuit(target_state)
         oracle_circuits.append(oracle_circuit)
 
-    target_distributions = [
-        state_to_distribution(state) for state in target_states
-    ]
+    target_distributions = [state_to_distribution(state) for state in target_states]
 
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard, CX, CY, CZ, Identity, X, Y, Z,
-            Swap, CCX, CCZ, Oracle.set_circuits(oracle_circuits), 
-            HadamardLayer
-        ], qubit_num=3
+            Hadamard,
+            CX,
+            CY,
+            CZ,
+            Identity,
+            X,
+            Y,
+            Z,
+            Swap,
+            CCX,
+            CCZ,
+            Oracle.set_circuits(oracle_circuits),
+            HadamardLayer,
+        ],
+        qubit_num=3,
     )
 
     ga_params = GAParams(
@@ -89,22 +114,25 @@ def run_grover():
     )
 
     fitness_params = FitnessParams(validity_checks=[uses_oracle, uses_hadamard_layer])
-    fitness: Fitness = SpectorFitness(
-        params=fitness_params
-    )
+    fitness: Fitness = SpectorFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
-    optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
+    optimizer: Optimizer = DoNothingOptimizer(
+        target_distributions, params=optimizer_params
+    )
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
 
     average_fitness_values = []
-    generations = []
-    def log_fitness_callback(population: List[List[Gate]], fitness_values: List[float], generation: int) -> None:
-        fitness_values = [value % 100 for value in fitness_values]
+
+    def log_fitness_callback(
+        ga: GA, population: List[List[Gate]], fitness_values: List[float], generation: int
+    ) -> None:
+        fitness_values = [
+            value % 100 for value in fitness_values
+        ]  # Remove punishment terms
         average_fitness = mean(fitness_values)
         average_fitness_values.append(average_fitness)
-        generations.append(generation)
 
     genetic_algorithm.on_after_generation(log_fitness_callback)
     genetic_algorithm.run()
