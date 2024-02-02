@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from qiskit import QuantumCircuit
+from statistics import mean 
 from typing import List
 
 from gates import Gate, GateSet, Hadamard, CX, CY, CZ, Identity, X, Y, Z, \
@@ -77,7 +78,7 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=500,
+        population_size=100, # 500
         generations=10,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
@@ -96,7 +97,22 @@ def run_grover():
     optimizer: Optimizer = DoNothingOptimizer(target_distributions, params = optimizer_params)
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
+
+    average_fitness_values = []
+    generations = []
+    def log_fitness_callback(population: List[List[Gate]], fitness_values: List[float], generation: int) -> None:
+        average_fitness = mean(fitness_values)
+        average_fitness_values.append(average_fitness)
+        generations.append(generation)
+
+    genetic_algorithm.on_after_generation(log_fitness_callback)
     genetic_algorithm.run()
+
+    plt.plot(average_fitness_values)
+    plt.xlabel("generation")
+    plt.ylabel("mean fitness")
+    plt.savefig("mean_fitness.png")
+    plt.show()
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
