@@ -63,6 +63,7 @@ class GA:
                 elite = toolbox.select_best(population, k=self.params.elitism_count)
 
             offspring = [toolbox.clone(ind) for ind in population]
+            random.shuffle(offspring)
 
             for i in range(1, len(offspring), 2):
                 if random.random() < self.params.crossover_prob:
