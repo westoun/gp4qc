@@ -13,10 +13,9 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
     gate_name: str = "combined_gate"
 
     GateTypes: List[Type] = None
-    gates: List[Gate] = []
+    gates: List[Gate]
 
     def __init__(self, qubit_num: int) -> None:
-        print("init called")
         assert self.GateTypes is not None, "No GateTypes have been provided."
 
         # This re-assignment is necessary to make variables
@@ -25,6 +24,9 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         self.GateTypes = self.GateTypes
         self._qubit_num = qubit_num
 
+        # Must initialize self.gates here to avoid it becoming
+        # a class property.
+        self.gates: List[Gate] = []
         for GateType in self.GateTypes:
             gate = GateType(qubit_num=qubit_num)
             self.gates.append(gate)
@@ -39,7 +41,6 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
             gate.mutate_operands()
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit: 
-        print("gates in combined:", len(self.gates))
         for gate in self.gates:
             circuit = gate.apply_to(circuit)
         return circuit
