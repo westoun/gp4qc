@@ -17,3 +17,6 @@ from .ccz import CCZ
 from .hadamard_layer import HadamardLayer
 from .optimizable import OptimizableGate, RY, RX, RZ, \
     CRY, CRZ, CRX, Phase
+from .x_layer import XLayer
+from .y_layer import YLayer
+from .z_layer import ZLayer

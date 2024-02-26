@@ -23,6 +23,9 @@ from gates import (
     CCZ,
     Oracle,
     HadamardLayer,
+    XLayer,
+    YLayer,
+    ZLayer
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
@@ -98,6 +101,9 @@ def run_grover():
             CCZ,
             Oracle.set_circuits(oracle_circuits),
             HadamardLayer,
+            XLayer,
+            YLayer,
+            ZLayer
         ],
         qubit_num=3,
     )
