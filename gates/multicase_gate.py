@@ -13,6 +13,7 @@ class MultiCaseGate(Gate):
     example, return different circuits depending on the
     test case.
     """
+    is_multicase: bool = True
 
     _case_index: int = 0
 

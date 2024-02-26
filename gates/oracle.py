@@ -10,6 +10,7 @@ from .multicase_gate import MultiCaseGate
 
 class Oracle(MultiCaseGate, ABC):
     name: str = "oracle"
+    is_oracle: bool = True 
 
     _circuits: List[QuantumCircuit] = None
     _oracle_qubit_num: int = None

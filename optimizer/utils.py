@@ -36,7 +36,7 @@ def build_circuit(
     circuit = QuantumCircuit(qubit_num)
 
     for gate in chromosome:
-        if issubclass(gate.__class__, MultiCaseGate):
+        if gate.is_multicase:
             gate.set_case_index(case_index)
 
         circuit = gate.apply_to(circuit)

@@ -8,6 +8,8 @@ from gates.gate import Gate
 
 
 class OptimizableGate(Gate, ABC):
+    is_optimizable: bool = True
+
     @abstractproperty
     def params(self) -> List[float]:
         ...

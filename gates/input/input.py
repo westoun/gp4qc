@@ -9,6 +9,7 @@ from gates.multicase_gate import MultiCaseGate
 
 class InputEncoding(MultiCaseGate, ABC):
     name: str = "input" 
+    is_input: bool = True
 
     _circuits: List[QuantumCircuit] = None
     _targets: List[int] = None
