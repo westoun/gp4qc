@@ -28,7 +28,7 @@ def update_params(param_vector: List[float], chromosome: List[Gate]) -> List[Gat
 # TODO: add caching
 def get_parametrized_gates(chromosome: List[Gate]) -> List[OptimizableGate]:
     parametrized_gates = [
-        gate for gate in chromosome if issubclass(gate.__class__, OptimizableGate)
+        gate for gate in chromosome if gate.is_optimizable
     ]
     return parametrized_gates
 
