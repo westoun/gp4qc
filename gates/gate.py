@@ -28,6 +28,9 @@ class Gate(ABC):
     def __str__(self) -> str:
         return self.__repr__()
 
+    def __eq__(self, other: "Gate") -> bool:
+        return self.__repr__() == other.__repr__()
+
     @property
     @abstractclassmethod
     def name() -> str:

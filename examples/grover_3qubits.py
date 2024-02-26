@@ -30,7 +30,8 @@ from gates import (
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
-from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
+from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, \
+    build_circuit, RemoveRedundanciesOptimizer
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -186,7 +187,7 @@ def run_grover():
     fitness: Fitness = SpectorFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
-    optimizer: Optimizer = DoNothingOptimizer(
+    optimizer: Optimizer = RemoveRedundanciesOptimizer(
         target_distributions, params=optimizer_params
     )
 
