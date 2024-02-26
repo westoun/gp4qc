@@ -2,6 +2,7 @@
 
 from math import floor
 from multiprocessing import Pool
+import os
 import random
 from statistics import mean
 from typing import Any, List, Tuple, Callable
@@ -47,7 +48,7 @@ class GA:
         # in one run.
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            toolbox = init_toolbox(
+            self.toolbox = toolbox = init_toolbox(
                 self.gate_set,
                 self.params.chromosome_length,
                 self.fitness,
@@ -84,7 +85,8 @@ class GA:
                     offspring[i] = toolbox.swap_order_mutate(offspring[i])
 
             # If no amount of workers is specified, os.cpu_count() is used.
-            with Pool() as pool:
+            cpu_count = os.cpu_count() - 1
+            with Pool(processes=cpu_count) as pool:
                 offspring = pool.map(toolbox.evaluate, offspring)
 
             population = elite + toolbox.select(
