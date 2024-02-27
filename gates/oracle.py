@@ -39,7 +39,7 @@ class Oracle(MultiCaseGate, ABC):
         return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self.targets)])})"
 
 
-class OracleWrapper:
+class OracleConstructor:
     _circuits: List[QuantumCircuit] = None
     _oracle_qubit_num: int = None
 

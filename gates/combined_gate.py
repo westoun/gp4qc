@@ -119,7 +119,7 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
                 gate.set_case_index(index)
 
 
-class CombinedGateWrapper:
+class CombinedGateConstructor:
     GateTypes: List[Type] = None
 
     def __init__(self, GateTypes: List[Type]) -> None:

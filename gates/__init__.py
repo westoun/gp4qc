@@ -11,7 +11,7 @@ from .z import Z
 from .swap import Swap
 from .input import InputEncoding, BinaryEncoding
 from .ccx import CCX
-from .oracle import Oracle, OracleWrapper
+from .oracle import Oracle, OracleConstructor
 from .multicase_gate import MultiCaseGate
 from .ccz import CCZ
 from .hadamard_layer import HadamardLayer
@@ -20,4 +20,4 @@ from .optimizable import OptimizableGate, RY, RX, RZ, \
 from .x_layer import XLayer
 from .y_layer import YLayer
 from .z_layer import ZLayer
-from .combined_gate import CombinedGate, CombinedGateWrapper
+from .combined_gate import CombinedGate, CombinedGateConstructor
