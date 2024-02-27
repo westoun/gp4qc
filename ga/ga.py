@@ -18,6 +18,8 @@ from optimizer import Optimizer
 class GA:
     """Wrapper class for the genetic algorithm code."""
 
+    gate_set: GateSet
+
     evolved_population: List[Gate] = []
     _after_generation_callbacks: List[Callable] = []
     _on_completion_callbacks: List[Callable] = []

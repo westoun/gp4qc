@@ -8,7 +8,7 @@ from .oracle import Oracle
 
 
 class GateSet:
-    gates: List[Gate] = []
+    gates: List[Type[Gate]] = []
 
     def __init__(self, gates: List[Type[Gate]], qubit_num: int) -> None:
         self.gates = gates
@@ -21,3 +21,6 @@ class GateSet:
         gate = GateType(qubit_num=self._qubit_num)
 
         return gate
+
+    def append(self, gate: Type[Gate]) -> None:
+        self.gates.append(gate)
