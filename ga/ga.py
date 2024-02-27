@@ -22,6 +22,8 @@ class GA:
     _after_generation_callbacks: List[Callable] = []
     _on_completion_callbacks: List[Callable] = []
 
+    _stopped: bool = False
+
     def __init__(
         self,
         gate_set: GateSet,
@@ -44,6 +46,8 @@ class GA:
         return self.run()
 
     def run(self):
+        self._stopped = False
+
         # Catch reinitialization warning if multiple GAs are used
         # in one run.
         with warnings.catch_warnings():
@@ -58,6 +62,9 @@ class GA:
         population = toolbox.population(n=self.params.population_size)
 
         for generation in range(1, self.params.generations + 1):
+            if self._stopped:
+                break
+
             if generation == 1:
                 elite = []
             else:
@@ -138,3 +145,6 @@ class GA:
             for chromosome in top_n_chromosomes
         ]
         return result
+
+    def stop(self) -> None:
+        self._stopped = True
