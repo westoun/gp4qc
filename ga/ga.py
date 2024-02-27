@@ -150,3 +150,6 @@ class GA:
 
     def stop(self) -> None:
         self._stopped = True
+
+    def has_been_stopped(self) -> bool:
+        return self._stopped
