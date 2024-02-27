@@ -22,6 +22,7 @@ from gates import (
     CCX,
     CCZ,
     Oracle,
+    OracleWrapper,
     HadamardLayer,
     XLayer,
     YLayer,
@@ -30,8 +31,13 @@ from gates import (
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
-from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, \
-    build_circuit, RemoveRedundanciesOptimizer
+from optimizer import (
+    Optimizer,
+    DoNothingOptimizer,
+    OptimizerParams,
+    build_circuit,
+    RemoveRedundanciesOptimizer,
+)
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -119,11 +125,11 @@ def compute_bigram_correlations(
         if np.std(bigrams[bigram]) == 0:
             if bigrams[bigram][0] == 0:
                 # not present in any chromosome
-                pass 
+                pass
             else:
                 print(f"\t{bigram}: NAN (present in every chromosome)")
         elif sum(bigrams[bigram]) < ga.params.population_size * 0.1:
-            continue 
+            continue
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
@@ -163,7 +169,7 @@ def run_grover():
             Swap,
             CCX,
             CCZ,
-            Oracle.set_circuits(oracle_circuits),
+            OracleWrapper(oracle_circuits),
             HadamardLayer,
             XLayer,
             YLayer,

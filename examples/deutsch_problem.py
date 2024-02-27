@@ -21,6 +21,7 @@ from gates import (
     InputEncoding,
     BinaryEncoding,
     Oracle,
+    OracleWrapper
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams
@@ -182,7 +183,7 @@ def run_deutsch():
             # CX,
             # CY,
             # CZ,
-            Oracle.set_circuits(oracle_circuits),
+            OracleWrapper(oracle_circuits),
         ],
         qubit_num=2,
     )

@@ -16,6 +16,7 @@ from gates import (
     Identity,
     InputEncoding,
     BinaryEncoding,
+    CombinedGate
 )
 
 from ga import GA, GAParams

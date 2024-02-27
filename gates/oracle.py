@@ -3,14 +3,14 @@
 from abc import ABC, abstractmethod
 from qiskit import QuantumCircuit
 from random import sample
-from typing import List
+from typing import Any, List
 
 from .multicase_gate import MultiCaseGate
 
 
 class Oracle(MultiCaseGate, ABC):
     name: str = "oracle"
-    is_oracle: bool = True 
+    is_oracle: bool = True
 
     _circuits: List[QuantumCircuit] = None
     _oracle_qubit_num: int = None
@@ -18,17 +18,10 @@ class Oracle(MultiCaseGate, ABC):
     targets = []
 
     def __init__(
-        self,
-        qubit_num: int,
+        self, qubit_num: int, circuits: List[QuantumCircuit], oracle_qubit_num: int
     ) -> None:
-        assert self._circuits is not None, "No circuits have been provided."
-        assert self._oracle_qubit_num is not None
-
-        # This re-assignment is necessary to make variables
-        # set through cls available as instance variables in
-        # a multiprocessing setup.
-        self._circuits = self._circuits
-        self._oracle_qubit_num = self._oracle_qubit_num
+        self._circuits = circuits
+        self._oracle_qubit_num = oracle_qubit_num
 
         self._qubit_num = qubit_num
 
@@ -42,11 +35,21 @@ class Oracle(MultiCaseGate, ABC):
         circuit.append(oracle_circuit, self.targets)
         return circuit
 
-    @classmethod
-    def set_circuits(cls, circuits: List[QuantumCircuit]) -> "Oracle":
-        cls._circuits = circuits
-        cls._oracle_qubit_num = len(circuits[0].qubits)
-        return cls
-
     def __repr__(self) -> str:
         return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self.targets)])})"
+
+
+class OracleWrapper:
+    _circuits: List[QuantumCircuit] = None
+    _oracle_qubit_num: int = None
+
+    def __init__(self, circuits: List[QuantumCircuit]) -> None:
+        self._circuits = circuits
+        self._oracle_qubit_num = len(circuits[0].qubits)
+
+    def __call__(self, qubit_num: int) -> Oracle:
+        return Oracle(
+            qubit_num=qubit_num,
+            circuits=self._circuits,
+            oracle_qubit_num=self._oracle_qubit_num,
+        )
