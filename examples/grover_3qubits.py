@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from qiskit import QuantumCircuit
 from statistics import mean
-from typing import List
+from typing import List, Callable, Type, Union
 
 from gates import (
     Gate,
@@ -27,6 +28,8 @@ from gates import (
     XLayer,
     YLayer,
     ZLayer,
+    CombinedGate,
+    CombinedGateConstructor,
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
@@ -74,22 +77,56 @@ def state_to_distribution(target_state: List[int]) -> List[float]:
     return distribution.tolist()
 
 
+def construct_ngram_name(gates: List[Gate]) -> str:
+    gate_names = []
+    for gate in gates:
+        if type(gate) in [CombinedGate, CombinedGateConstructor]:
+            for GateType in gate.GateTypes:
+                if GateType == Oracle or type(GateType) == OracleConstructor:
+                    gate_names.append("oracle")
+                else:
+                    gate_names.append(GateType.name)
+        elif type(gate) in [Oracle, OracleConstructor]:
+            # TA: How to handle multiple oracles?
+            gate_names.append("oracle")
+        else:
+            gate_names.append(gate.name)
+    return "_".join(gate_names)
+
+
+def extract_ngram_types(
+    gates: List[Union[Type, CombinedGateConstructor, OracleConstructor]]
+) -> List[Type]:
+    gate_types = []
+    for gate in gates:
+        if type(gate) == CombinedGateConstructor:
+            gate_types.extend(gate.GateTypes)
+        elif type(gate) == OracleConstructor:
+            gate_types.append(gate)
+        elif type(gate) in [Oracle, CombinedGate]:
+            raise ValueError("Missing information! Should be constructor classes!")
+        else:
+            gate_types.append(gate)
+    return gate_types
+
+
 def compute_bigram_correlations(
     ga: GA,
     population: List[List[Gate]],
     fitness_values: List[float],
     generation: int,
 ) -> None:
-    if generation % 3 != 0:
-        return
-
     population = [ga.toolbox.clone(ind) for ind in population]
 
-    fitness_values = [
-        value % 100 for value in fitness_values
-    ]  # Remove punishment terms
-
     bigrams = {}
+    bigram_types = {}
+
+    # Note: in the gate_set we have constructor classes, while
+    # the chromosomes themselves contain the constructed gates.
+    # Since combined gates require the constructor classes, 
+    # bigram_types are collected here. The construct_ngram_name 
+    # makes sure that both classes and instances are mapped to 
+    # the same name space.
     for gate1 in ga.gate_set.gates:
         if type(gate1) == Identity:
             continue
@@ -98,8 +135,10 @@ def compute_bigram_correlations(
             if type(gate2) == Identity:
                 continue
 
-            bigram = gate1.name + "_" + gate2.name
+            bigram = construct_ngram_name([gate1, gate2])
+
             bigrams[bigram] = []
+            bigram_types[bigram] = extract_ngram_types([gate1, gate2])
 
     for chromosome in population:
         chromosome_bigrams = set()
@@ -111,7 +150,7 @@ def compute_bigram_correlations(
             if type(gate) == Identity or type(successor_gate) == Identity:
                 continue
 
-            bigram = gate.name + "_" + successor_gate.name
+            bigram = construct_ngram_name([gate, successor_gate])
             chromosome_bigrams.add(bigram)
 
         for bigram in bigrams:
@@ -135,6 +174,7 @@ def compute_bigram_correlations(
 
             if correlation > 0.2:
                 print(f"\t{bigram}: {correlation}")
+                print(bigram_types[bigram])
 
 
 def run_grover():
@@ -189,7 +229,7 @@ def run_grover():
         log_average_fitness_at=1,
     )
 
-    fitness_params = FitnessParams(validity_checks=[uses_oracle, uses_hadamard_layer])
+    fitness_params = FitnessParams(validity_checks=[])
     fitness: Fitness = SpectorFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
