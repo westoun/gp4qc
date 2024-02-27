@@ -116,6 +116,9 @@ def compute_bigram_correlations(
     fitness_values: List[float],
     generation: int,
 ) -> None:
+    if generation < 10:
+        return
+
     population = [ga.toolbox.clone(ind) for ind in population]
 
     bigrams = {}
@@ -123,9 +126,9 @@ def compute_bigram_correlations(
 
     # Note: in the gate_set we have constructor classes, while
     # the chromosomes themselves contain the constructed gates.
-    # Since combined gates require the constructor classes, 
-    # bigram_types are collected here. The construct_ngram_name 
-    # makes sure that both classes and instances are mapped to 
+    # Since combined gates require the constructor classes,
+    # bigram_types are collected here. The construct_ngram_name
+    # makes sure that both classes and instances are mapped to
     # the same name space.
     for gate1 in ga.gate_set.gates:
         if type(gate1) == Identity:
@@ -159,22 +162,38 @@ def compute_bigram_correlations(
             else:
                 bigrams[bigram].append(0)
 
-    print(f"\nRelevant correlations after generation {generation}:")
     for bigram in bigrams:
-        if np.std(bigrams[bigram]) == 0:
+
+        # Check for arbitrary support level
+        if sum(bigrams[bigram]) < ga.params.population_size * 0.1:
+            continue
+
+        elif np.std(bigrams[bigram]) == 0:
             if bigrams[bigram][0] == 0:
                 # not present in any chromosome
                 pass
             else:
-                print(f"\t{bigram}: NAN (present in every chromosome)")
-        elif sum(bigrams[bigram]) < ga.params.population_size * 0.1:
-            continue
+                print(
+                    f"\tCorrelation of {bigram} at generation {generation}: NAN (present in every chromosome)"
+                )
+
+                ga.stop()
+
+                NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
+                ga.gate_set.append(NewCombinedGate)
+
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
             if correlation > 0.2:
-                print(f"\t{bigram}: {correlation}")
-                print(bigram_types[bigram])
+                print(
+                    f"\tCorrelation of {bigram} at generation {generation}: {correlation}"
+                )
+
+                ga.stop()
+
+                NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
+                ga.gate_set.append(NewCombinedGate)
 
 
 def run_grover():
@@ -219,14 +238,14 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=500,
-        generations=20,
+        population_size=700,
+        generations=100,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.1,
         operand_mutation_prob=0.1,
         chromosome_length=10,
-        log_average_fitness_at=1,
+        log_average_fitness_at=3,
     )
 
     fitness_params = FitnessParams(validity_checks=[])
@@ -247,15 +266,17 @@ def run_grover():
         fitness_values: List[float],
         generation: int,
     ) -> None:
-        fitness_values = [
-            value % 100 for value in fitness_values
-        ]  # Remove punishment terms
         average_fitness = mean(fitness_values)
         average_fitness_values.append(average_fitness)
 
     genetic_algorithm.on_after_generation(compute_bigram_correlations)
     genetic_algorithm.on_after_generation(log_fitness_callback)
-    genetic_algorithm.run()
+
+    for i in range(5):
+        genetic_algorithm.run()
+
+        if not genetic_algorithm.has_been_stopped():
+            break
 
     plt.plot(average_fitness_values)
     plt.xlabel("generation")
