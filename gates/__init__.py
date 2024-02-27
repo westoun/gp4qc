@@ -20,4 +20,4 @@ from .optimizable import OptimizableGate, RY, RX, RZ, \
 from .x_layer import XLayer
 from .y_layer import YLayer
 from .z_layer import ZLayer
-from .combined_gate import CombinedGate
+from .combined_gate import CombinedGate, CombinedGateWrapper

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from qiskit import QuantumCircuit
-from typing import List, Union, Tuple, Type
+from typing import Any, List, Union, Tuple, Type
 
 from .gate import Gate
 from .multicase_gate import MultiCaseGate
@@ -15,13 +15,8 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
     GateTypes: List[Type] = None
     gates: List[Gate]
 
-    def __init__(self, qubit_num: int) -> None:
-        assert self.GateTypes is not None, "No GateTypes have been provided."
-
-        # This re-assignment is necessary to make variables
-        # set through cls available as instance variables in
-        # a multiprocessing setup.
-        self.GateTypes = self.GateTypes
+    def __init__(self, qubit_num: int, GateTypes: List[Type]) -> None:
+        self.GateTypes = GateTypes
         self._qubit_num = qubit_num
 
         # Must initialize self.gates here to avoid it becoming
@@ -31,21 +26,17 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
             gate = GateType(qubit_num=qubit_num)
             self.gates.append(gate)
 
-    @classmethod
-    def set_gate_types(cls, GateTypes: List[Type]) -> None:
-        cls.GateTypes = GateTypes
-
     # General gate functions
-    def mutate_operands(self) -> None: 
+    def mutate_operands(self) -> None:
         for gate in self.gates:
             gate.mutate_operands()
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit: 
+    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         for gate in self.gates:
             circuit = gate.apply_to(circuit)
         return circuit
 
-    def __repr__(self) -> str: 
+    def __repr__(self) -> str:
         combined_repr = f"""{self.gate_name}({', '.join(
             [gate.__repr__() for gate in self.gates]
         )})"""
@@ -92,7 +83,7 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
 
     # Optimizable gate functions
     @property
-    def params(self) -> List[float]: 
+    def params(self) -> List[float]:
         param_vector = []
 
         for gate in self.gates:
@@ -102,7 +93,7 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         return param_vector
 
     @property
-    def bounds(self) -> List[Union[Tuple[float, float], None]]: 
+    def bounds(self) -> List[Union[Tuple[float, float], None]]:
         bounds_vector = []
 
         for gate in self.gates:
@@ -112,7 +103,7 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         return bounds_vector
 
     @property
-    def set_params(self, params: List[float]) -> None: 
+    def set_params(self, params: List[float]) -> None:
         for gate in self.gates:
             if gate.is_optimizable:
                 gate_params, params = (
@@ -126,3 +117,13 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         for gate in self.gates:
             if gate.is_multicase:
                 gate.set_case_index(index)
+
+
+class CombinedGateWrapper:
+    GateTypes: List[Type] = None
+
+    def __init__(self, GateTypes: List[Type]) -> None:
+        self.GateTypes = GateTypes
+
+    def __call__(self, qubit_num: int) -> CombinedGate:
+        return CombinedGate(qubit_num=qubit_num, GateTypes=self.GateTypes)
