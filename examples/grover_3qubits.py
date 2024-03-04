@@ -200,11 +200,6 @@ def compute_bigram_correlations(
                     payload=f"Creating {bigram} as separate gate due to presence in every chromosome.",
                     target_path="results/events.csv",
                 )
-                log_event(
-                    experiment_id=EXPERIMENT_ID,
-                    event_type=ALGORITHM_RESTART_EVENT,
-                    target_path="results/events.csv",
-                )
 
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
@@ -223,11 +218,6 @@ def compute_bigram_correlations(
                     experiment_id=EXPERIMENT_ID,
                     event_type=GATE_ADDED_EVENT,
                     payload=f"Creating {bigram} as separate gate due to fitness correlation of {correlation}.",
-                    target_path="results/events.csv",
-                )
-                log_event(
-                    experiment_id=EXPERIMENT_ID,
-                    event_type=ALGORITHM_RESTART_EVENT,
                     target_path="results/events.csv",
                 )
 
@@ -330,7 +320,13 @@ def run_grover():
     for _ in range(5):
         genetic_algorithm.run()
 
-        if not genetic_algorithm.has_been_stopped():
+        if genetic_algorithm.has_been_stopped():
+            log_event(
+                experiment_id=EXPERIMENT_ID,
+                event_type=ALGORITHM_RESTART_EVENT,
+                target_path="results/events.csv",
+            )
+        else:
             break
 
     plt.plot(mean_fitness_values)
