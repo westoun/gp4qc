@@ -4,6 +4,7 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 from qiskit import QuantumCircuit
+from statistics import mean
 from typing import List, Callable, Type, Union
 from uuid import uuid4
 
@@ -40,7 +41,7 @@ from optimizer import (
     build_circuit,
     RemoveRedundanciesOptimizer,
 )
-from utils.logging import log_experiment_details, log_fitness_callback_wrapper
+from utils.logging import log_experiment_details, log_fitness
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -260,27 +261,36 @@ def run_grover():
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
 
-    log_experiment_details(ga=genetic_algorithm, experiment_id=EXPERIMENT_ID)
-    log_fitness_callback = partial(
-        log_fitness_callback_wrapper,
+    log_experiment_details(
+        ga=genetic_algorithm,
         experiment_id=EXPERIMENT_ID,
-        target_path="fitness_values.csv",
+        target_path="results/experiments.csv",
     )
-    genetic_algorithm.on_after_generation(log_fitness_callback)
 
-    # average_fitness_values = []
+    mean_fitness_values = []
 
-    # def log_fitness_callback(
-    #     ga: GA,
-    #     population: List[List[Gate]],
-    #     fitness_values: List[float],
-    #     generation: int,
-    # ) -> None:
-    #     average_fitness = mean(fitness_values)
-    #     average_fitness_values.append(average_fitness)
+    def log_fitness_callback(
+        ga: GA,
+        population: List[List[Gate]],
+        fitness_values: List[float],
+        generation: int,
+    ) -> None:
+        best_chromosome, best_fitness_value = ga.get_best_chromosomes(1)[0]
+        mean_fitness_value = mean(fitness_values)
+
+        mean_fitness_values.append(mean_fitness_value)
+
+        log_fitness(
+            experiment_id=EXPERIMENT_ID,
+            generation=generation,
+            best_fitness_value=best_fitness_value,
+            mean_fitness_value=mean_fitness_value,
+            best_chromosome=best_chromosome,
+            target_path="results/fitness_values.csv",
+        )
 
     # genetic_algorithm.on_after_generation(compute_bigram_correlations)
-    # genetic_algorithm.on_after_generation(log_fitness_callback)
+    genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
     # for i in range(5):
@@ -289,10 +299,10 @@ def run_grover():
     #     if not genetic_algorithm.has_been_stopped():
     #         break
 
-    # plt.plot(average_fitness_values)
-    # plt.xlabel("generation")
-    # plt.ylabel("mean fitness")
-    # plt.savefig("tmp/mean_fitness.png")
+    plt.plot(mean_fitness_values)
+    plt.xlabel("generation")
+    plt.ylabel("mean fitness")
+    plt.savefig(f"results/{EXPERIMENT_ID}_mean_fitness.png")
     # plt.show()
 
     TOP_N = 3

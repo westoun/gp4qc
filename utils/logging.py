@@ -2,7 +2,6 @@
 
 from datetime import datetime
 import os
-from statistics import mean
 import subprocess
 from typing import List
 
@@ -77,24 +76,3 @@ def log_fitness(
     with open(target_path, "a") as target_file:
         row = "; ".join(components)
         target_file.write("\n" + row)
-
-
-def log_fitness_callback_wrapper(
-    ga: GA,
-    population: List[List[Gate]],
-    fitness_values: List[float],
-    generation: int,
-    experiment_id: str,
-    target_path: str,
-) -> None:
-    mean_fitness_value = mean(fitness_values)
-    best_chromosome, best_fitness_value = ga.get_best_chromosomes(1)[0]
-
-    log_fitness(
-        experiment_id=experiment_id,
-        generation=generation,
-        best_fitness_value=best_fitness_value,
-        mean_fitness_value=mean_fitness_value,
-        best_chromosome=best_chromosome,
-        target_path=target_path,
-    )
