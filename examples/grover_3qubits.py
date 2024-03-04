@@ -30,6 +30,13 @@ from gates import (
     ZLayer,
     CombinedGate,
     CombinedGateConstructor,
+    RY,
+    RX,
+    RZ,
+    CRY,
+    CRZ,
+    CRX,
+    Phase,
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
@@ -40,6 +47,7 @@ from optimizer import (
     OptimizerParams,
     build_circuit,
     RemoveRedundanciesOptimizer,
+    NumericalOptimizer,
 )
 from utils.logging import (
     log_experiment_details,
@@ -177,7 +185,7 @@ def compute_bigram_correlations(
     for bigram in bigrams:
 
         # Check for arbitrary support level
-        if sum(bigrams[bigram]) < ga.params.population_size * 0.1:
+        if sum(bigrams[bigram]) < ga.params.population_size * 0.05:
             continue
 
         elif np.std(bigrams[bigram]) == 0:
@@ -185,11 +193,8 @@ def compute_bigram_correlations(
                 # not present in any chromosome
                 pass
             else:
-                print(
-                    f"\tCorrelation of {bigram} at generation {generation}: NAN (present in every chromosome)"
-                )
 
-                ga.stop()
+                # ga.stop()
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
@@ -204,12 +209,9 @@ def compute_bigram_correlations(
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
-            if correlation > 0.2:
-                print(
-                    f"\tCorrelation of {bigram} at generation {generation}: {correlation}"
-                )
+            if correlation > 0.25:
 
-                ga.stop()
+                # ga.stop()
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
@@ -259,19 +261,26 @@ def run_grover():
             XLayer,
             YLayer,
             ZLayer,
+            RY,
+            RX,
+            RZ,
+            CRY,
+            CRZ,
+            CRX,
+            Phase,
         ],
         qubit_num=3,
     )
 
     ga_params = GAParams(
-        population_size=700,
-        generations=100,
+        population_size= 1000,
+        generations=1000,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.1,
         operand_mutation_prob=0.1,
-        chromosome_length=10,
-        log_average_fitness=False,
+        chromosome_length=20,
+        log_average_fitness=True,  # False,
         log_average_fitness_at=1,
     )
 
@@ -279,7 +288,7 @@ def run_grover():
     fitness: Fitness = SpectorFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
-    optimizer: Optimizer = RemoveRedundanciesOptimizer(
+    optimizer: Optimizer = NumericalOptimizer(
         target_distributions, params=optimizer_params
     )
 
@@ -317,17 +326,17 @@ def run_grover():
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
-    for _ in range(5):
-        genetic_algorithm.run()
+    # for _ in range(5):
+    #     genetic_algorithm.run()
 
-        if genetic_algorithm.has_been_stopped():
-            log_event(
-                experiment_id=EXPERIMENT_ID,
-                event_type=ALGORITHM_RESTART_EVENT,
-                target_path="results/events.csv",
-            )
-        else:
-            break
+    #     if genetic_algorithm.has_been_stopped():
+    #         log_event(
+    #             experiment_id=EXPERIMENT_ID,
+    #             event_type=ALGORITHM_RESTART_EVENT,
+    #             target_path="results/events.csv",
+    #         )
+    #     else:
+    #         break
 
     plt.plot(mean_fitness_values)
     plt.xlabel("generation")
