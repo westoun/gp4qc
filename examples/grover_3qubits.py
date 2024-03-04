@@ -3,10 +3,9 @@
 from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
 from qiskit import QuantumCircuit
-from statistics import mean
 from typing import List, Callable, Type, Union
+from uuid import uuid4
 
 from gates import (
     Gate,
@@ -41,6 +40,7 @@ from optimizer import (
     build_circuit,
     RemoveRedundanciesOptimizer,
 )
+from utils.logging import log_experiment_details, log_fitness_callback_wrapper
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -197,6 +197,8 @@ def compute_bigram_correlations(
 
 
 def run_grover():
+    EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
+
     target_states = [
         [0, 0, 0],
         [0, 0, 1],
@@ -238,14 +240,14 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=700,
-        generations=100,
+        population_size=100,  # 700,
+        generations=10,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.1,
         operand_mutation_prob=0.1,
         chromosome_length=10,
-        log_average_fitness_at=3,
+        log_average_fitness_at=-1,
     )
 
     fitness_params = FitnessParams(validity_checks=[])
@@ -258,31 +260,40 @@ def run_grover():
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
 
-    average_fitness_values = []
-
-    def log_fitness_callback(
-        ga: GA,
-        population: List[List[Gate]],
-        fitness_values: List[float],
-        generation: int,
-    ) -> None:
-        average_fitness = mean(fitness_values)
-        average_fitness_values.append(average_fitness)
-
-    genetic_algorithm.on_after_generation(compute_bigram_correlations)
+    log_experiment_details(ga=genetic_algorithm, experiment_id=EXPERIMENT_ID)
+    log_fitness_callback = partial(
+        log_fitness_callback_wrapper,
+        experiment_id=EXPERIMENT_ID,
+        target_path="fitness_values.csv",
+    )
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
-    for i in range(5):
-        genetic_algorithm.run()
+    # average_fitness_values = []
 
-        if not genetic_algorithm.has_been_stopped():
-            break
+    # def log_fitness_callback(
+    #     ga: GA,
+    #     population: List[List[Gate]],
+    #     fitness_values: List[float],
+    #     generation: int,
+    # ) -> None:
+    #     average_fitness = mean(fitness_values)
+    #     average_fitness_values.append(average_fitness)
 
-    plt.plot(average_fitness_values)
-    plt.xlabel("generation")
-    plt.ylabel("mean fitness")
-    plt.savefig("tmp/mean_fitness.png")
-    plt.show()
+    # genetic_algorithm.on_after_generation(compute_bigram_correlations)
+    # genetic_algorithm.on_after_generation(log_fitness_callback)
+
+    genetic_algorithm.run()
+    # for i in range(5):
+    #     genetic_algorithm.run()
+
+    #     if not genetic_algorithm.has_been_stopped():
+    #         break
+
+    # plt.plot(average_fitness_values)
+    # plt.xlabel("generation")
+    # plt.ylabel("mean fitness")
+    # plt.savefig("tmp/mean_fitness.png")
+    # plt.show()
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):

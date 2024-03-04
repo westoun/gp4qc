@@ -24,3 +24,7 @@ class GateSet:
 
     def append(self, gate: Type[Gate]) -> None:
         self.gates.append(gate)
+
+    def __repr__(self) -> str:
+        representation = f"[{','.join([str(gate) for gate in self.gates])}]"
+        return representation

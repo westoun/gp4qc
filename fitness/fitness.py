@@ -10,6 +10,7 @@ from .params import FitnessParams
 class Fitness(ABC):
     """Compute the fitness function of a chromosome.
     """
+    params: FitnessParams
 
     @abstractmethod
     def __init__(
