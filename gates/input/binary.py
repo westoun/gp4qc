@@ -3,17 +3,16 @@
 from qiskit import QuantumCircuit
 from typing import List
 
-from .input import InputEncoding
+from .input import InputEncoding, InputEncodingConstructor
+
 
 class BinaryEncoding(InputEncoding):
     name: str = "x_input"
 
-    @classmethod
-    def init_circuits(
-        cls, input_values: List[List[int]], qubit_num: int
-    ) -> "BinaryEncoding":
-        cls._targets = list(range(qubit_num))
+    _circuits: List[QuantumCircuit] = None
+    _targets: List[int] = None
 
+    def build_circuits(self, qubit_num: int, input_values: List[List[int]]) -> None:
         circuits: List[QuantumCircuit] = []
 
         for case_index in range(len(input_values)):
@@ -29,8 +28,17 @@ class BinaryEncoding(InputEncoding):
 
             circuits.append(circuit)
 
-        cls._circuits = circuits
-        return cls
+        return circuits
 
     def __repr__(self) -> str:
         return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
+
+
+class BinaryEncodingConstructor(InputEncodingConstructor):
+    input_values: List[List[int]] = None
+
+    def __init__(self, input_values: List[List[int]]) -> None:
+        self.input_values = input_values
+
+    def __call__(self, qubit_num: int) -> BinaryEncoding:
+        return BinaryEncoding(qubit_num, input_values=self.input_values)

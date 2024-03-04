@@ -9,14 +9,18 @@ from .x import X
 from .y import Y
 from .z import Z
 from .swap import Swap
-from .input import InputEncoding, BinaryEncoding
+from .input import (
+    InputEncoding,
+    BinaryEncoding,
+    InputEncodingConstructor,
+    BinaryEncodingConstructor,
+)
 from .ccx import CCX
 from .oracle import Oracle, OracleConstructor
 from .multicase_gate import MultiCaseGate
 from .ccz import CCZ
 from .hadamard_layer import HadamardLayer
-from .optimizable import OptimizableGate, RY, RX, RZ, \
-    CRY, CRZ, CRX, Phase
+from .optimizable import OptimizableGate, RY, RX, RZ, CRY, CRZ, CRX, Phase
 from .x_layer import XLayer
 from .y_layer import YLayer
 from .z_layer import ZLayer

@@ -1,2 +1,2 @@
-from .input import InputEncoding
-from .binary import BinaryEncoding
+from .input import InputEncoding, InputEncodingConstructor
+from .binary import BinaryEncoding, BinaryEncodingConstructor
