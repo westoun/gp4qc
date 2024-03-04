@@ -41,7 +41,18 @@ from optimizer import (
     build_circuit,
     RemoveRedundanciesOptimizer,
 )
-from utils.logging import log_experiment_details, log_fitness
+from utils.logging import (
+    log_experiment_details,
+    log_fitness,
+    log_event,
+    GATE_ADDED_EVENT,
+    ALGORITHM_RESTART_EVENT,
+)
+
+# Place experiment id creation outside of main function
+# to avoid having to pass it through multiple layer of
+# nested function calls.
+EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
@@ -183,6 +194,18 @@ def compute_bigram_correlations(
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
 
+                log_event(
+                    experiment_id=EXPERIMENT_ID,
+                    event_type=GATE_ADDED_EVENT,
+                    payload=f"Creating {bigram} as separate gate due to presence in every chromosome.",
+                    target_path="results/events.csv",
+                )
+                log_event(
+                    experiment_id=EXPERIMENT_ID,
+                    event_type=ALGORITHM_RESTART_EVENT,
+                    target_path="results/events.csv",
+                )
+
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
@@ -196,10 +219,20 @@ def compute_bigram_correlations(
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
 
+                log_event(
+                    experiment_id=EXPERIMENT_ID,
+                    event_type=GATE_ADDED_EVENT,
+                    payload=f"Creating {bigram} as separate gate due to fitness correlation of {correlation}.",
+                    target_path="results/events.csv",
+                )
+                log_event(
+                    experiment_id=EXPERIMENT_ID,
+                    event_type=ALGORITHM_RESTART_EVENT,
+                    target_path="results/events.csv",
+                )
+
 
 def run_grover():
-    EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
-
     target_states = [
         [0, 0, 0],
         [0, 0, 1],
@@ -241,14 +274,15 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size=100,  # 700,
-        generations=10,
+        population_size=700,
+        generations=100,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
         swap_order_mutation_prob=0.1,
         operand_mutation_prob=0.1,
         chromosome_length=10,
-        log_average_fitness_at=-1,
+        log_average_fitness=False,
+        log_average_fitness_at=1,
     )
 
     fitness_params = FitnessParams(validity_checks=[])
@@ -289,15 +323,15 @@ def run_grover():
             target_path="results/fitness_values.csv",
         )
 
-    # genetic_algorithm.on_after_generation(compute_bigram_correlations)
+    genetic_algorithm.on_after_generation(compute_bigram_correlations)
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
-    # for i in range(5):
-    #     genetic_algorithm.run()
+    for _ in range(5):
+        genetic_algorithm.run()
 
-    #     if not genetic_algorithm.has_been_stopped():
-    #         break
+        if not genetic_algorithm.has_been_stopped():
+            break
 
     plt.plot(mean_fitness_values)
     plt.xlabel("generation")

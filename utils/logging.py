@@ -3,7 +3,7 @@
 from datetime import datetime
 import os
 import subprocess
-from typing import List
+from typing import List, Any
 
 from gates import Gate
 from ga import GA
@@ -70,6 +70,43 @@ def log_fitness(
         str(best_fitness_value),
         str(mean_fitness_value),
         str(best_chromosome),
+        created_at,
+    ]
+
+    with open(target_path, "a") as target_file:
+        row = "; ".join(components)
+        target_file.write("\n" + row)
+
+
+GATE_ADDED_EVENT: str = "GATE_ADDED_EVENT"
+ALGORITHM_RESTART_EVENT: str = "ALGORITHM_RESTART_EVENT"
+
+
+def log_event(
+    experiment_id: str,
+    event_type: str,
+    payload: Any = None,
+    target_path: str = "events.csv",
+) -> None:
+    header_row = "experiment_id; event_type; payload; created_at"
+
+    if not os.path.exists(target_path):
+        with open(target_path, "w") as target_file:
+            target_file.write(header_row)
+
+    created_at: str = get_timestamp()
+
+    if payload is None:
+        payload = ""
+    elif type(payload) == str:
+        payload = '"' + payload + '"'
+    else:
+        payload = str(payload)
+
+    components = [
+        experiment_id,
+        event_type,
+        payload,
         created_at,
     ]
 
