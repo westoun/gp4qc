@@ -7,35 +7,32 @@ from fitness import Fitness
 from gates import Gate
 from .params import OptimizerParams, default_params
 from .optimizer import Optimizer
-from .utils import build_circuit, run_circuit, aggregate_state_distribution
+from .utils import (
+    build_circuit,
+    run_circuit,
+    aggregate_state_distribution,
+    get_state_distributions,
+)
+
 
 class DoNothingOptimizer(Optimizer):
     def __init__(
-        self, target_distributions: List[List[float]], params: OptimizerParams = default_params
+        self,
+        target_distributions: List[List[float]],
+        params: OptimizerParams = default_params,
     ) -> None:
         self.target_distributions = target_distributions
         self.params = params
 
-    def optimize(self, chromosome: List[Gate], fitness: Fitness) -> Tuple[List[Gate], float]:
-        state_distributions: List[List[float]] = []
+    def optimize(
+        self, chromosome: List[Gate], fitness: Fitness
+    ) -> Tuple[List[Gate], float]:
+        state_distributions: List[List[float]] = get_state_distributions(
+            chromosome, params=self.params, case_count=len(self.target_distributions)
+        )
 
-        for i in range(len(self.target_distributions)):
-            circuit = build_circuit(
-                chromosome,
-                qubit_num=self.params.qubit_num,
-                case_index=i,
-            )
-
-            state_distribution = run_circuit(circuit)
-
-            state_distribution = aggregate_state_distribution(
-                state_distribution,
-                measurement_qubit_num=self.params.measurement_qubit_num,
-                ancillary_num=self.params.qubit_num - self.params.measurement_qubit_num,
-            )
-
-            state_distributions.append(state_distribution)
-
-        fitness_score = fitness.evaluate(state_distributions, self.target_distributions, chromosome)
+        fitness_score = fitness.evaluate(
+            state_distributions, self.target_distributions, chromosome
+        )
 
         return chromosome, fitness_score
