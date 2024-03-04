@@ -93,9 +93,7 @@ class GA:
                 if random.random() < self.params.swap_order_mutation_prob:
                     offspring[i] = toolbox.swap_order_mutate(offspring[i])
 
-            # If no amount of workers is specified, os.cpu_count() is used.
-            cpu_count = os.cpu_count() - 1
-            with Pool(processes=cpu_count) as pool:
+            with Pool(processes=self.params.cpu_count) as pool:
                 offspring = pool.map(toolbox.evaluate, offspring)
 
             population = elite + toolbox.select(
