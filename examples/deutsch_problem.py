@@ -19,6 +19,7 @@ from gates import (
     CZ,
     Swap,
     CCX,
+    HadamardLayer,
     Identity,
     InputEncoding,
     BinaryEncoding,
@@ -32,7 +33,13 @@ from fitness.validity_checks import (
     has_exactly_1_oracle,
     has_input_at_first_position,
 )
-from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
+from optimizer import (
+    Optimizer,
+    DoNothingOptimizer,
+    RemoveRedundanciesOptimizer,
+    OptimizerParams,
+    build_circuit,
+)
 from utils.logging import (
     log_experiment_details,
     log_fitness,
@@ -213,13 +220,14 @@ def run_deutsch():
         gates=[
             Hadamard,
             X,
-            Identity,
-            Swap,
             Y,
             Z,
             CX,
             CY,
             CZ,
+            Swap,
+            HadamardLayer,
+            Identity,
             OracleConstructor(oracle_circuits),
         ],
         qubit_num=2,
@@ -233,7 +241,7 @@ def run_deutsch():
     fitness: Fitness = Jensensshannon(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=2, measurement_qubit_num=1)
-    optimizer: Optimizer = DoNothingOptimizer(
+    optimizer: Optimizer = RemoveRedundanciesOptimizer(
         target_distributions, params=optimizer_params
     )
 
