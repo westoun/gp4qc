@@ -23,6 +23,7 @@ from gates import (
     Identity,
     InputEncoding,
     BinaryEncoding,
+    BinaryEncodingConstructor,
     Oracle,
     OracleConstructor,
 )
@@ -71,7 +72,7 @@ def construct_oracle_circuit(
             X,
             CX,
             Identity,
-            BinaryEncoding.init_circuits(input_values, 2),
+            BinaryEncodingConstructor(input_values=input_values),
         ],
         qubit_num=2,
     )
@@ -87,33 +88,6 @@ def construct_oracle_circuit(
     )
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
-
-    log_experiment_details(
-        ga=genetic_algorithm,
-        experiment_id=EXPERIMENT_ID,
-        target_path="results/experiments.csv",
-    )
-
-    def log_fitness_callback(
-        ga: GA,
-        population: List[List[Gate]],
-        fitness_values: List[float],
-        generation: int,
-    ) -> None:
-        best_chromosome, best_fitness_value = ga.get_best_chromosomes(1)[0]
-        mean_fitness_value = mean(fitness_values)
-
-        log_fitness(
-            experiment_id=EXPERIMENT_ID,
-            generation=generation,
-            best_fitness_value=best_fitness_value,
-            mean_fitness_value=mean_fitness_value,
-            best_chromosome=best_chromosome,
-            target_path="results/fitness_values.csv",
-        )
-
-    genetic_algorithm.on_after_generation(log_fitness_callback)
-
     genetic_algorithm.run()
 
     chromosome, fitness_value = genetic_algorithm.get_best_chromosomes(n=1)[0]
@@ -191,9 +165,9 @@ def create_oracle_circuits():
 
 
 def run_deutsch():
-    oracle_circuits = create_oracle_circuits()
-    with open("results/deutsch_oracle.pickle", "wb") as oracle_file:
-        pickle.dump(oracle_circuits, oracle_file)
+    # oracle_circuits = create_oracle_circuits()
+    # with open("results/deutsch_oracle.pickle", "wb") as oracle_file:
+    #     pickle.dump(oracle_circuits, oracle_file)
 
     with open("results/deutsch_oracle.pickle", "rb") as oracle_file:
         oracle_circuits = pickle.load(oracle_file)
@@ -246,6 +220,33 @@ def run_deutsch():
     )
 
     genetic_algorithm = GA(gate_set, fitness, optimizer, params=ga_params)
+
+    log_experiment_details(
+        ga=genetic_algorithm,
+        experiment_id=EXPERIMENT_ID,
+        target_path="results/experiments.csv",
+    )
+
+    def log_fitness_callback(
+        ga: GA,
+        population: List[List[Gate]],
+        fitness_values: List[float],
+        generation: int,
+    ) -> None:
+        best_chromosome, best_fitness_value = ga.get_best_chromosomes(1)[0]
+        mean_fitness_value = mean(fitness_values)
+
+        log_fitness(
+            experiment_id=EXPERIMENT_ID,
+            generation=generation,
+            best_fitness_value=best_fitness_value,
+            mean_fitness_value=mean_fitness_value,
+            best_chromosome=best_chromosome,
+            target_path="results/fitness_values.csv",
+        )
+
+    genetic_algorithm.on_after_generation(log_fitness_callback)
+
     genetic_algorithm.run()
 
     TOP_N = 3
