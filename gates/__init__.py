@@ -13,7 +13,10 @@ from .input import (
     InputEncoding,
     BinaryEncoding,
     InputEncodingConstructor,
-    PhaseEncoding
+    PhaseEncoding,
+    RXEncoding,
+    RYEncoding,
+    RZEncoding,
 )
 from .ccx import CCX
 from .oracle import Oracle, OracleConstructor
