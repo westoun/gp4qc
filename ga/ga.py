@@ -71,6 +71,8 @@ class GA:
                 elite = []
             else:
                 elite = toolbox.select_best(population, k=self.params.elitism_count)
+                # Create deep copy to avoid adjusting elite chromosomes through mutation
+                elite = [toolbox.clone(ind) for ind in elite] 
 
             offspring = [toolbox.clone(ind) for ind in population]
             random.shuffle(offspring)
