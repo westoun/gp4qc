@@ -16,7 +16,7 @@ from gates import (
     Identity,
     InputEncoding,
     BinaryEncoding,
-    BinaryEncodingConstructor,
+    InputEncodingConstructor,
     CombinedGate,
 )
 
@@ -53,7 +53,9 @@ def run_half_adder():
             CX,
             CCX,
             Identity,
-            BinaryEncodingConstructor(input_values),
+            InputEncodingConstructor(
+                input_values=input_values, EncodingType=BinaryEncoding
+            ),
         ],
         qubit_num=3,
     )

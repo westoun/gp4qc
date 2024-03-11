@@ -17,7 +17,7 @@ from gates import (
     Identity,
     Phase,
     PhaseEncoding,
-    PhaseEncodingConstructor,
+    InputEncodingConstructor,
     CX,
     CY,
     CZ,
@@ -70,7 +70,7 @@ def run_construct_relu():
             CRZ,
             CRX,
             Swap,
-            PhaseEncodingConstructor(input_values),
+            InputEncodingConstructor(input_values, PhaseEncoding),
         ],
         qubit_num=2,
     )

@@ -23,7 +23,7 @@ from gates import (
     Identity,
     InputEncoding,
     BinaryEncoding,
-    BinaryEncodingConstructor,
+    InputEncodingConstructor,
     Oracle,
     OracleConstructor,
 )
@@ -72,7 +72,9 @@ def construct_oracle_circuit(
             X,
             CX,
             Identity,
-            BinaryEncodingConstructor(input_values=input_values),
+            InputEncodingConstructor(
+                input_values=input_values, EncodingType=BinaryEncoding
+            ),
         ],
         qubit_num=2,
     )

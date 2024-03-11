@@ -32,13 +32,3 @@ class BinaryEncoding(InputEncoding):
 
     def __repr__(self) -> str:
         return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
-
-
-class BinaryEncodingConstructor(InputEncodingConstructor):
-    input_values: List[List[int]] = None
-
-    def __init__(self, input_values: List[List[int]]) -> None:
-        self.input_values = input_values
-
-    def __call__(self, qubit_num: int) -> BinaryEncoding:
-        return BinaryEncoding(qubit_num, input_values=self.input_values)

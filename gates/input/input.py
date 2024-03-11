@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod, abstractclassmethod
 from qiskit import QuantumCircuit
-from typing import Any, List
+from typing import Any, List, Type
 
 from gates.multicase_gate import MultiCaseGate
 
@@ -34,10 +34,12 @@ class InputEncoding(MultiCaseGate, ABC):
 
 
 class InputEncodingConstructor(ABC):
-    input_values: List[List[int]] = None
+    input_values: List[List[int]]
+    EncodingType: Type
 
-    def __init__(self, input_values: List[List[int]]) -> None:
+    def __init__(self, input_values: List[List[int]], EncodingType: Type) -> None:
         self.input_values = input_values
+        self.EncodingType = EncodingType
 
-    @abstractmethod
-    def __call__(self, qubit_num: int) -> InputEncoding: ...
+    def __call__(self, qubit_num: int) -> InputEncoding:
+        return self.EncodingType(qubit_num, self.input_values)

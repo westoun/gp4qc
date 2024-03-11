@@ -13,8 +13,6 @@ from .input import (
     InputEncoding,
     BinaryEncoding,
     InputEncodingConstructor,
-    BinaryEncodingConstructor,
-    PhaseEncodingConstructor,
     PhaseEncoding
 )
 from .ccx import CCX
