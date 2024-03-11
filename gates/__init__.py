@@ -14,6 +14,8 @@ from .input import (
     BinaryEncoding,
     InputEncodingConstructor,
     BinaryEncodingConstructor,
+    PhaseEncodingConstructor,
+    PhaseEncoding
 )
 from .ccx import CCX
 from .oracle import Oracle, OracleConstructor
