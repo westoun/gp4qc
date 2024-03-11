@@ -42,6 +42,12 @@ class NumericalOptimizer(Optimizer):
         target_distributions: List[List[float]],
         params: OptimizerParams = default_params,
     ) -> None:
+        for case in target_distributions:
+            for prob in case:
+                assert (
+                    prob >= 0 and prob <= 1
+                ), "Target distribution values are probabilities. Must be in [0, 1]."
+
         self.target_distributions = target_distributions
         self.params = params
 
