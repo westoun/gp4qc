@@ -209,7 +209,8 @@ def compute_bigram_correlations(
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
-            if correlation > 0.25:
+            # Look for negative correlation, since lower fitness values are better
+            if correlation < - 0.25:
 
                 # ga.stop()
 
