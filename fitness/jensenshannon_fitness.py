@@ -10,16 +10,20 @@ from .params import FitnessParams, default_params
 
 
 class Jensensshannon(Fitness):
-    def __init__(
-        self, params: FitnessParams = default_params
-    ) -> None:
+    def __init__(self, params: FitnessParams = default_params) -> None:
         self.params = params
 
-    def evaluate(self, state_distributions: List[List[float]], target_distributions: List[List[float]], 
-                 chromosome: List[Gate]) -> float:
+    def evaluate(
+        self,
+        state_distributions: List[List[float]],
+        target_distributions: List[List[float]],
+        chromosome: List[Gate],
+    ) -> float:
         errors: List[float] = []
 
-        for state_distribution, target_distribution in zip(state_distributions, target_distributions):
+        for state_distribution, target_distribution in zip(
+            state_distributions, target_distributions
+        ):
             assert len(state_distribution) == len(
                 target_distribution
             ), f"Missmatch between produced distribution (len {len(state_distribution)}) and target distribution (len {len(target_distribution)})"
