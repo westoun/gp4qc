@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+  gp4qc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: python3 main.py
+    volumes:
+      - ./results:/app/results
+  
