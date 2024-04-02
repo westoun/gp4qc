@@ -11,3 +11,5 @@ RUN buildDeps='gcc ' \
     && apt-get purge -y --auto-remove $buildDeps
 
 COPY . . 
+
+ENTRYPOINT [ "python3", "main.py" ]
