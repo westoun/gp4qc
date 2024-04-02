@@ -72,7 +72,7 @@ class GA:
             else:
                 elite = toolbox.select_best(population, k=self.params.elitism_count)
                 # Create deep copy to avoid adjusting elite chromosomes through mutation
-                elite = [toolbox.clone(ind) for ind in elite] 
+                elite = [toolbox.clone(ind) for ind in elite]
 
             offspring = [toolbox.clone(ind) for ind in population]
             random.shuffle(offspring)
@@ -83,17 +83,29 @@ class GA:
                         offspring[i - 1], offspring[i]
                     )
 
-            for i in range(len(offspring)):
-                if random.random() < self.params.swap_gate_mutation_prob:
-                    offspring[i] = toolbox.swap_gate_mutate(offspring[i])
+            if self.params.swap_gate_mutation_prob > 0:
+                for i in range(len(offspring)):
+                    for j in range(len(offspring[i])):
+                        if random.random() < self.params.swap_gate_mutation_prob:
+                            offspring[i] = toolbox.swap_gate_mutate(
+                                offspring[i], gate_idx=j
+                            )
 
-            for i in range(len(offspring)):
-                if random.random() < self.params.operand_mutation_prob:
-                    offspring[i] = toolbox.operand_mutate(offspring[i])
+            if self.params.operand_mutation_prob > 0:
+                for i in range(len(offspring)):
+                    for j in range(len(offspring[i])):
+                        if random.random() < self.params.operand_mutation_prob:
+                            offspring[i] = toolbox.operand_mutate(
+                                offspring[i], gate_idx=j
+                            )
 
-            for i in range(len(offspring)):
-                if random.random() < self.params.swap_order_mutation_prob:
-                    offspring[i] = toolbox.swap_order_mutate(offspring[i])
+            if self.params.swap_order_mutation_prob > 0:
+                for i in range(len(offspring)):
+                    for j in range(len(offspring[i])):
+                        if random.random() < self.params.swap_order_mutation_prob:
+                            offspring[i] = toolbox.swap_order_mutate(
+                                offspring[i], gate1_idx=j
+                            )
 
             with Pool(processes=self.params.cpu_count) as pool:
                 offspring = pool.map(toolbox.evaluate, offspring)
