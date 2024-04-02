@@ -194,8 +194,6 @@ def compute_bigram_correlations(
                 pass
             else:
 
-                # ga.stop()
-
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
 
@@ -210,9 +208,7 @@ def compute_bigram_correlations(
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
             # Look for negative correlation, since lower fitness values are better
-            if correlation < - 0.25:
-
-                # ga.stop()
+            if correlation < -0.25:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
@@ -274,7 +270,7 @@ def run_grover():
     )
 
     ga_params = GAParams(
-        population_size= 1000,
+        population_size=1000,
         generations=1000,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
@@ -327,17 +323,6 @@ def run_grover():
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
-    # for _ in range(5):
-    #     genetic_algorithm.run()
-
-    #     if genetic_algorithm.has_been_stopped():
-    #         log_event(
-    #             experiment_id=EXPERIMENT_ID,
-    #             event_type=ALGORITHM_RESTART_EVENT,
-    #             target_path="results/events.csv",
-    #         )
-    #     else:
-    #         break
 
     plt.plot(mean_fitness_values)
     plt.xlabel("generation")
