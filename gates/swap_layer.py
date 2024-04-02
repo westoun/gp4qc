@@ -23,3 +23,7 @@ class SwapLayer(Gate):
 
     def __repr__(self) -> str:
         return f"{self.name}()"
+
+    @property 
+    def gate_count(self) -> int:
+        return self._qubit_num // 2

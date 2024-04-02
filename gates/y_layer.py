@@ -12,7 +12,7 @@ class YLayer(Gate):
         self._qubit_num = qubit_num
 
     def mutate_operands(self) -> None:
-        pass 
+        pass
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
         for i in range(self._qubit_num):
@@ -21,3 +21,7 @@ class YLayer(Gate):
 
     def __repr__(self) -> str:
         return f"{self.name}()"
+
+    @property
+    def gate_count(self) -> int:
+        return self._qubit_num

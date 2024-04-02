@@ -32,6 +32,10 @@ class InputEncoding(MultiCaseGate, ABC):
     def __repr__(self) -> str:
         return f"{self.name}({','.join(['target' + str((i + 1)) + '=' + str(target) for i, target in enumerate(self._targets)])})"
 
+    @property
+    def gate_count(self) -> int:
+        return len(self._targets)
+
 
 class InputEncodingConstructor(ABC):
     input_values: List[List[int]]

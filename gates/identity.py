@@ -11,6 +11,8 @@ class Identity(Gate):
 
     target: int
 
+    gate_count: int = 0
+
     def __init__(self, qubit_num: int):
         self._qubit_num = qubit_num
         self.target = randint(0, qubit_num - 1)

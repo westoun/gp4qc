@@ -43,6 +43,10 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         return combined_repr
 
     @property
+    def gate_count(self) -> int:
+        return sum([gate.gate_count for gate in self.gates])
+
+    @property
     def name(self) -> str:
         combined_name = f"""{self.gate_name}[{', '.join(
             [gate.name for gate in self.gates]
