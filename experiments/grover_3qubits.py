@@ -37,6 +37,7 @@ from gates import (
     CRZ,
     CRX,
     Phase,
+    SwapLayer,
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
@@ -258,6 +259,7 @@ def run_grover():
             XLayer,
             YLayer,
             ZLayer,
+            SwapLayer,
             RY,
             RX,
             RZ,
@@ -274,10 +276,10 @@ def run_grover():
         generations=1000,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.1,
-        swap_order_mutation_prob=0.1,
-        operand_mutation_prob=0.1,
+        swap_order_mutation_prob=0,
+        operand_mutation_prob=0,
         chromosome_length=20,
-        log_average_fitness=True,  # False,
+        log_average_fitness=False,
         log_average_fitness_at=1,
     )
 
@@ -319,7 +321,7 @@ def run_grover():
             target_path="results/fitness_values.csv",
         )
 
-    genetic_algorithm.on_after_generation(compute_bigram_correlations)
+    # genetic_algorithm.on_after_generation(compute_bigram_correlations)
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
