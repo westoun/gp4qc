@@ -106,7 +106,6 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
 
         return bounds_vector
 
-    @property
     def set_params(self, params: List[float]) -> None:
         for gate in self.gates:
             if gate.is_optimizable:
