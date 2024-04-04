@@ -20,9 +20,12 @@ def get_timestamp() -> str:
 
 
 def log_experiment_details(
-    ga: GA, experiment_id: str, target_path: str = "experiments.csv"
+    ga: GA,
+    experiment_id: str,
+    target_path: str = "experiments.csv",
+    description: str = "",
 ) -> None:
-    header_row = "experiment_id; ga_params; gate_set; fitness; fitness_params; optimizer; optimizer_params; created_at; last_commit_id"
+    header_row = "experiment_id; description; ga_params; gate_set; fitness; fitness_params; optimizer; optimizer_params; created_at; last_commit_id"
 
     if not os.path.exists(target_path):
         with open(target_path, "w") as target_file:
@@ -33,6 +36,7 @@ def log_experiment_details(
 
     components = [
         experiment_id,
+        description,
         str(ga.params),
         str(ga.gate_set),
         str(ga.fitness),

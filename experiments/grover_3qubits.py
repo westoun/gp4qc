@@ -63,6 +63,10 @@ from utils.logging import (
 # nested function calls.
 EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
 
+# Describe in which configuration the experiment is being 
+# run. Especially: which treatments are being applied?
+DESCRIPTION = ""
+
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
     # Circuit design taken from
@@ -297,6 +301,7 @@ def run_grover():
         ga=genetic_algorithm,
         experiment_id=EXPERIMENT_ID,
         target_path="results/experiments.csv",
+        description=DESCRIPTION
     )
 
     mean_fitness_values = []
