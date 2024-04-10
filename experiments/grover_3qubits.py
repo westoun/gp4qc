@@ -213,7 +213,7 @@ def compute_bigram_correlations(
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
             # Look for negative correlation, since lower fitness values are better
-            if correlation < -0.25:
+            if correlation < -0.2:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
@@ -279,12 +279,14 @@ def run_grover():
         population_size=1000,
         generations=1000,
         crossover_prob=0.4,
-        swap_gate_mutation_prob=0.1,
+        swap_gate_mutation_prob=0.03,
         swap_order_mutation_prob=0,
         operand_mutation_prob=0,
-        chromosome_length=20,
+        chromosome_length=30,
         log_average_fitness=False,
         log_average_fitness_at=1,
+        cpu_count=25,
+        elitism_percentage=0.5
     )
 
     fitness_params = FitnessParams(validity_checks=[])
