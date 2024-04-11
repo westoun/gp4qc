@@ -42,7 +42,7 @@ from gates import (
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness, \
-    BaselineFitness, ConstraintFitness
+    BaselineFitness, IndirectQAFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
 from optimizer import (
     Optimizer,

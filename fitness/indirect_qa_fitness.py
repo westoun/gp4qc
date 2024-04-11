@@ -32,7 +32,7 @@ SUPERPOSITION_CONSTRAINT_GATES = [H, HLayer, CH, RX, RY, CRX, CRY]
 ENTANGLEMENT_CONSTRAINT_GATES = [CX, CY, CZ, CCX, CCZ, CRY, CRZ, CRX, CH]
 
 
-class ConstraintFitness(Fitness):
+class IndirectQAFitness(Fitness):
     def __init__(self, params: FitnessParams = default_params) -> None:
         self.params = params
 
