@@ -26,12 +26,12 @@ def count_gate_types(chromosome: List[Gate]) -> int:
 
 def contains_gate_type(chromosome: List[Gate], GateTypes: List[Type]) -> bool:
     for gate in chromosome:
+        if type(gate) in GateTypes:
+            return True
+
         if type(gate) == CombinedGate:
             for GateType in gate.GateTypes:
                 if GateType in GateTypes:
                     return True
-
-        elif type(gate) in GateTypes:
-            return True
 
     return False
