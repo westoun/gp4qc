@@ -19,7 +19,7 @@ def count_gate_types(chromosome: List[Gate]) -> int:
             name = "_".join([GateType.name for GateType in gate.GateTypes])
             gate_names.append(name)
         else:
-            gate_names.append(name)
+            gate_names.append(gate.name)
 
     return len(set(gate_names))
 
