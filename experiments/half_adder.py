@@ -4,7 +4,7 @@ from typing import List
 from gates import (
     Gate,
     GateSet,
-    Hadamard,
+    H,
     X,
     Y,
     Z,
@@ -43,7 +43,7 @@ def run_half_adder():
 
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard,
+            H,
             Y,
             Z,
             CY,

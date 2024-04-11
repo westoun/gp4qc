@@ -9,7 +9,7 @@ import warnings
 from gates import (
     Gate,
     GateSet,
-    Hadamard,
+    H,
     X,
     Y,
     Z,
@@ -87,7 +87,7 @@ compute_gate_correlation_every_5 = partial(compute_gate_correlation_every, n=5)
 def run_create_probability_distribution():
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard,
+            H,
             X,
             Y,
             Z,

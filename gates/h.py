@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 
 from qiskit import QuantumCircuit
+from random import randint
 
 from .gate import Gate
 
 
-class HadamardLayer(Gate):
-    name: str = "h_layer"
+class H(Gate):
+    name: str = "h"
+
+    target: int
 
     def __init__(self, qubit_num: int):
         self._qubit_num = qubit_num
+        self.target = randint(0, qubit_num - 1)
 
     def mutate_operands(self) -> None:
-        pass
+        self.target = randint(0, self._qubit_num - 1)
 
     def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        for i in range(self._qubit_num):
-            circuit.h(i)
+        circuit.h(self.target)
         return circuit
 
     def __repr__(self) -> str:
-        return f"{self.name}()"
-
-    @property
-    def gate_count(self) -> int:
-        return self._qubit_num
+        return f"{self.name}(target={self.target})"

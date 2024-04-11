@@ -11,7 +11,7 @@ from uuid import uuid4
 from gates import (
     Gate,
     GateSet,
-    Hadamard,
+    H,
     CX,
     CY,
     CZ,
@@ -24,7 +24,7 @@ from gates import (
     CCZ,
     Oracle,
     OracleConstructor,
-    HadamardLayer,
+    HLayer,
     XLayer,
     YLayer,
     ZLayer,
@@ -248,7 +248,7 @@ def run_grover():
 
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard,
+            H,
             CX,
             CY,
             CZ,
@@ -260,7 +260,7 @@ def run_grover():
             CCX,
             CCZ,
             OracleConstructor(oracle_circuits),
-            HadamardLayer,
+            HLayer,
             XLayer,
             YLayer,
             ZLayer,

@@ -3,14 +3,14 @@
 import matplotlib.pyplot as plt
 from typing import List
 
-from gates import Gate, GateSet, Hadamard, X, Y, Z, CX, CY, CZ, Identity
+from gates import Gate, GateSet, H, X, Y, Z, CX, CY, CZ, Identity
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams
 from optimizer import Optimizer, DoNothingOptimizer, OptimizerParams, build_circuit
 
 def run_bell_state_2qubits():
     gate_set: GateSet = GateSet(
-        gates=[Hadamard, X, Y, Z, CX, CY, CZ, Identity], qubit_num=2
+        gates=[H, X, Y, Z, CX, CY, CZ, Identity], qubit_num=2
     )
     target_distributions: List[List[float]] = [[0.5, 0, 0, 0.5]]
 

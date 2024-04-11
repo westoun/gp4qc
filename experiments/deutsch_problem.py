@@ -10,7 +10,7 @@ from uuid import uuid4
 from gates import (
     Gate,
     GateSet,
-    Hadamard,
+    H,
     X,
     Y,
     Z,
@@ -19,7 +19,7 @@ from gates import (
     CZ,
     Swap,
     CCX,
-    HadamardLayer,
+    HLayer,
     Identity,
     InputEncoding,
     BinaryEncoding,
@@ -194,7 +194,7 @@ def run_deutsch():
 
     gate_set: GateSet = GateSet(
         gates=[
-            Hadamard,
+            H,
             X,
             Y,
             Z,
@@ -202,7 +202,7 @@ def run_deutsch():
             CY,
             CZ,
             Swap,
-            HadamardLayer,
+            HLayer,
             Identity,
             OracleConstructor(oracle_circuits),
         ],
