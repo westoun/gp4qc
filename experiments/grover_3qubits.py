@@ -38,11 +38,18 @@ from gates import (
     CRX,
     Phase,
     SwapLayer,
-    CH
+    CH,
 )
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness, \
-    BaselineFitness, IndirectQAFitness
+from fitness import (
+    Fitness,
+    Jensensshannon,
+    FitnessParams,
+    SpectorFitness,
+    BaselineFitness,
+    IndirectQAFitness,
+    DirectQAFitness,
+)
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
 from optimizer import (
     Optimizer,
@@ -273,7 +280,7 @@ def run_grover():
             CRZ,
             CRX,
             Phase,
-            CH
+            CH,
         ],
         qubit_num=3,
     )
@@ -292,10 +299,11 @@ def run_grover():
         elitism_percentage=0.5,
     )
 
-    fitness_params = FitnessParams(validity_checks=[])
+    fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)
     # fitness: Fitness = SpectorFitness(params=fitness_params)
     fitness: Fitness = BaselineFitness(params=fitness_params)
-    # fitness: Fitness = ConstraintFitness(params=fitness_params)
+    # fitness: Fitness = IndirectQAFitness(params=fitness_params)
+    # fitness: Fitness = DirectQAFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=8)
     optimizer: Optimizer = NumericalOptimizer(

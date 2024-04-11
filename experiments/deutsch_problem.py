@@ -81,6 +81,7 @@ def construct_oracle_circuit(
 
     fitness_params = FitnessParams(
         validity_checks=[has_exactly_1_input, has_input_at_first_position],
+        classical_oracle_count=2,
     )
     fitness: Fitness = Jensensshannon(params=fitness_params)
 

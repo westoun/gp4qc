@@ -5,6 +5,7 @@ from typing import List, Callable
 
 from gates import Gate
 
+
 @dataclass
 class FitnessParams:
     # validity checks identify invalid chromosomes.
@@ -14,5 +15,7 @@ class FitnessParams:
     validity_checks: List[Callable[[List[Gate]], bool]] = field(
         default_factory=lambda: []
     )
+    classical_oracle_count: int = None
+
 
 default_params: FitnessParams = FitnessParams()

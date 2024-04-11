@@ -5,3 +5,4 @@ from .params import FitnessParams
 from .spector_fitness import SpectorFitness
 from .baseline_fitness import BaselineFitness
 from .indirect_qa_fitness import IndirectQAFitness
+from .direct_qa_fitness import DirectQAFitness
