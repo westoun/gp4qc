@@ -4,9 +4,10 @@ from scipy.spatial import distance
 from statistics import mean
 from typing import List, Tuple
 
-from gates import Gate, InputEncoding, Identity
+from gates import Gate
 from .fitness import Fitness
 from .params import FitnessParams, default_params
+from .utils import get_gate_count
 
 
 class SpectorFitness(Fitness):
@@ -22,8 +23,8 @@ class SpectorFitness(Fitness):
         hits: int = len(target_distributions)
         errors: List[float] = []
 
-        for state_distribution, target_distribution in zip(
-            state_distributions, target_distributions
+        for i, (state_distribution, target_distribution) in enumerate(
+            zip(state_distributions, target_distributions)
         ):
             assert len(state_distribution) == len(
                 target_distribution
@@ -45,7 +46,7 @@ class SpectorFitness(Fitness):
         if len(errors) > 0:
             fitness_score = hits + sum(errors) / max(hits, 1)
         else:
-            fitness_score = sum([gate.gate_count for gate in chromosome]) / 100000
+            fitness_score = get_gate_count(chromosome) / 100000
 
         for validity_check in self.params.validity_checks:
             if not validity_check(chromosome):
