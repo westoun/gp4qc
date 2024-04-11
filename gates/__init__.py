@@ -29,3 +29,4 @@ from .y_layer import YLayer
 from .z_layer import ZLayer
 from .combined_gate import CombinedGate, CombinedGateConstructor
 from .swap_layer import SwapLayer
+from .ch import CH

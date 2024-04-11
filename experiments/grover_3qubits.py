@@ -38,6 +38,7 @@ from gates import (
     CRX,
     Phase,
     SwapLayer,
+    CH
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness, \
@@ -272,6 +273,7 @@ def run_grover():
             CRZ,
             CRX,
             Phase,
+            CH
         ],
         qubit_num=3,
     )

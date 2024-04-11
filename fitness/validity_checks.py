@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from gates import Gate, Oracle, InputEncoding, HLayer, H, OptimizableGate
+from gates import Gate, Oracle, InputEncoding, HLayer, H, \
+    OptimizableGate, CH
 from typing import List
 
 
@@ -30,7 +31,7 @@ def has_input_at_first_position(chromosome: List[Gate]) -> bool:
 
 def uses_hadamard(chromosome: List[Gate]) -> bool:
     for gate in chromosome:
-        if type(gate) in [H, HLayer]:
+        if type(gate) in [H, HLayer, CH]:
             return True
 
     return False
