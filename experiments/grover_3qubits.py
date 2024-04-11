@@ -40,7 +40,8 @@ from gates import (
     SwapLayer,
 )
 from ga import GA, GAParams
-from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness
+from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness, \
+    BaselineFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
 from optimizer import (
     Optimizer,
@@ -63,7 +64,7 @@ from utils.logging import (
 # nested function calls.
 EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
 
-# Describe in which configuration the experiment is being 
+# Describe in which configuration the experiment is being
 # run. Especially: which treatments are being applied?
 DESCRIPTION = ""
 
@@ -286,13 +287,14 @@ def run_grover():
         log_average_fitness=False,
         log_average_fitness_at=1,
         cpu_count=25,
-        elitism_percentage=0.5
+        elitism_percentage=0.5,
     )
 
     fitness_params = FitnessParams(validity_checks=[])
-    fitness: Fitness = SpectorFitness(params=fitness_params)
+    # fitness: Fitness = SpectorFitness(params=fitness_params)
+    fitness: Fitness = BaselineFitness(params=fitness_params)
 
-    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=8)
     optimizer: Optimizer = NumericalOptimizer(
         target_distributions, params=optimizer_params
     )
@@ -303,7 +305,7 @@ def run_grover():
         ga=genetic_algorithm,
         experiment_id=EXPERIMENT_ID,
         target_path="results/experiments.csv",
-        description=DESCRIPTION
+        description=DESCRIPTION,
     )
 
     mean_fitness_values = []
