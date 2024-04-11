@@ -29,7 +29,7 @@ from .utils import count_gates, contains_gate_type
 
 SUPERPOSITION_CONSTRAINT_GATES = [H, HLayer, CH, RX, RY, CRX, CRY]
 # COMPLEX_VALUE_CONSTRAINT_GATES = []
-ENTANGLEMENT_CONSTRAINT_GATES = [CX, CY, CZ, CCX, CCZ, CRY, CRZ, CRX, CH]
+ENTANGLEMENT_CONSTRAINT_GATES = [CX, CY, CZ, CCX, CCZ, CRY, CRZ, CRX, CH, Oracle]
 
 
 class IndirectQAFitness(Fitness):
