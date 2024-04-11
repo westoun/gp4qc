@@ -76,9 +76,9 @@ class IndirectQAFitness(Fitness):
             fitness_score += len(target_distribution) + 1
 
         if len(errors) > 0:
-            fitness_score = hits + sum(errors) / max(hits, 1)
+            fitness_score += hits + sum(errors) / max(hits, 1)
         else:
-            fitness_score = count_gates(chromosome) / 100000
+            fitness_score += count_gates(chromosome) / 100000
 
         for validity_check in self.params.validity_checks:
             if not validity_check(chromosome):
