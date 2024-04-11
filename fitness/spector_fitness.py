@@ -7,7 +7,7 @@ from typing import List, Tuple
 from gates import Gate
 from .fitness import Fitness
 from .params import FitnessParams, default_params
-from .utils import get_gate_count
+from .utils import count_gates
 
 
 class SpectorFitness(Fitness):
@@ -46,7 +46,7 @@ class SpectorFitness(Fitness):
         if len(errors) > 0:
             fitness_score = hits + sum(errors) / max(hits, 1)
         else:
-            fitness_score = get_gate_count(chromosome) / 100000
+            fitness_score = count_gates(chromosome) / 100000
 
         for validity_check in self.params.validity_checks:
             if not validity_check(chromosome):
