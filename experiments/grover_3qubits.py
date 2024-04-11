@@ -42,7 +42,7 @@ from gates import (
 )
 from ga import GA, GAParams
 from fitness import Fitness, Jensensshannon, FitnessParams, SpectorFitness, \
-    BaselineFitness
+    BaselineFitness, ConstraintFitness
 from fitness.validity_checks import uses_oracle, uses_hadamard_layer
 from optimizer import (
     Optimizer,
@@ -295,6 +295,7 @@ def run_grover():
     fitness_params = FitnessParams(validity_checks=[])
     # fitness: Fitness = SpectorFitness(params=fitness_params)
     fitness: Fitness = BaselineFitness(params=fitness_params)
+    # fitness: Fitness = ConstraintFitness(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=8)
     optimizer: Optimizer = NumericalOptimizer(

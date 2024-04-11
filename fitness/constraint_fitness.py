@@ -4,13 +4,35 @@ from scipy.spatial import distance
 from statistics import mean
 from typing import List, Tuple
 
-from gates import Gate, InputEncoding, Identity
+from gates import (
+    Gate,
+    Oracle,
+    H,
+    CX,
+    CY,
+    CZ,
+    CH,
+    CCX,
+    CCZ,
+    HLayer,
+    RY,
+    RX,
+    RZ,
+    CRY,
+    CRZ,
+    CRX,
+    Phase,
+)
 from .fitness import Fitness
 from .params import FitnessParams, default_params
-from .utils import count_gates, count_gate_types
+from .utils import count_gates, contains_gate_type
+
+SUPERPOSITION_CONSTRAINT_GATES = [H, HLayer, CH, RX, RY, CRX, CRY]
+# COMPLEX_VALUE_CONSTRAINT_GATES = []
+ENTANGLEMENT_CONSTRAINT_GATES = [CX, CY, CZ, CCX, CCZ, CRY, CRZ, CRX, CH]
 
 
-class BaselineFitness(Fitness):
+class ConstraintFitness(Fitness):
     def __init__(self, params: FitnessParams = default_params) -> None:
         self.params = params
 
@@ -43,10 +65,18 @@ class BaselineFitness(Fitness):
                 errors.append(error)
 
         fitness_score: float = 0
+
+        if not contains_gate_type(chromosome, [Oracle]):
+            fitness_score += len(target_distribution) + 1
+
+        if not contains_gate_type(chromosome, SUPERPOSITION_CONSTRAINT_GATES):
+            fitness_score += len(target_distribution) + 1
+
+        if not contains_gate_type(chromosome, ENTANGLEMENT_CONSTRAINT_GATES):
+            fitness_score += len(target_distribution) + 1
+
         if len(errors) > 0:
-            fitness_score = hits + sum(errors) / max(
-                hits, 1
-            )  # ranges from (1, #testcases]
+            fitness_score = hits + sum(errors) / max(hits, 1)
         else:
             fitness_score = count_gates(chromosome) / 100000
 
