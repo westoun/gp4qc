@@ -245,7 +245,7 @@ def compute_bigram_correlations(
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
 
             # Look for negative correlation, since lower fitness values are better
-            if correlation < -0.2:
+            if correlation < -0.25:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
                 ga.gate_set.append(NewCombinedGate)
