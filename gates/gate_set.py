@@ -5,7 +5,7 @@ from typing import Type, List
 
 from .gate import Gate
 from .oracle import Oracle
-from utils.gates import construct_gate_type_name
+from .utils import construct_gate_type_name
 
 
 class GateSet:

@@ -2,7 +2,9 @@
 
 from typing import List, Union, Type
 
-from gates import Gate, Oracle, CombinedGate, CombinedGateConstructor, OracleConstructor
+from .gate import Gate
+from .oracle import Oracle, OracleConstructor
+from .combined_gate import CombinedGate, CombinedGateConstructor
 
 
 def construct_gate_type_name(gate: Gate) -> str:

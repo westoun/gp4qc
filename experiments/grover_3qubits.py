@@ -66,7 +66,7 @@ from utils.logging import (
     GATE_ADDED_EVENT,
     ALGORITHM_RESTART_EVENT,
 )
-from utils.gates import extract_ngram_types, get_unique_chomosomes, construct_ngram_name
+from gates.utils import extract_ngram_types, get_unique_chomosomes, construct_ngram_name
 
 # Place experiment id creation outside of main function
 # to avoid having to pass it through multiple layer of
@@ -180,7 +180,7 @@ def compute_bigram_correlations(
             else:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
-                
+
                 if not ga.gate_set.contains(NewCombinedGate):
                     ga.gate_set.append(NewCombinedGate)
 
