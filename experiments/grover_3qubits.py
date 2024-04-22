@@ -262,7 +262,7 @@ def run_grover():
 
     ga_params = GAParams(
         population_size=1000,
-        generations=1000,
+        generations=800,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.03,
         swap_order_mutation_prob=0,
@@ -270,8 +270,8 @@ def run_grover():
         chromosome_length=30,
         log_average_fitness=False,
         log_average_fitness_at=1,
-        cpu_count=25,
-        elitism_percentage=0.5,
+        cpu_count=28,
+        elitism_percentage=0.01,
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)
