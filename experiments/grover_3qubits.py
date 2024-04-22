@@ -170,9 +170,6 @@ def compute_bigram_correlations(
     fitness_values: List[float],
     generation: int,
 ) -> None:
-    if generation < 10:
-        return
-
     population = [ga.toolbox.clone(ind) for ind in population]
 
     # Get unique chromosomes and recompute fitness values to avoid
