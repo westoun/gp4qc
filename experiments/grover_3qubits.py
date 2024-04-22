@@ -144,6 +144,26 @@ def extract_ngram_types(
     return gate_types
 
 
+def get_unique_chomosomes(population: List[List[Gate]]) -> List[List[Gate]]:
+    # for duplicates (not accounting for parameter values),
+    # keep the chromosomes with better (=lower) fitness.
+    unique_chromosomes = {}
+    for chromosome in population:
+        chromosome_name = construct_ngram_name(chromosome)
+
+        if chromosome_name in unique_chromosomes:
+            if (
+                unique_chromosomes[chromosome_name].fitness.values[0]
+                > chromosome.fitness.values[0]
+            ):
+                unique_chromosomes[chromosome_name] = chromosome
+
+        else:
+            unique_chromosomes[chromosome_name] = chromosome
+
+    return list(unique_chromosomes.values())
+
+
 def compute_bigram_correlations(
     ga: GA,
     population: List[List[Gate]],
@@ -154,6 +174,12 @@ def compute_bigram_correlations(
         return
 
     population = [ga.toolbox.clone(ind) for ind in population]
+
+    # Get unique chromosomes and recompute fitness values to avoid
+    # distorted correlation computation due to high amount of 
+    # duplicates in the population.
+    unique_chromosomes = get_unique_chomosomes(population)
+    fitness_values = [chromosome.fitness.values[0] for chromosome in unique_chromosomes]
 
     bigrams = {}
     bigram_types = {}
@@ -177,7 +203,7 @@ def compute_bigram_correlations(
             bigrams[bigram] = []
             bigram_types[bigram] = extract_ngram_types([gate1, gate2])
 
-    for chromosome in population:
+    for chromosome in unique_chromosomes:
         chromosome_bigrams = set()
 
         for i in range(len(chromosome) - 1):
@@ -199,7 +225,7 @@ def compute_bigram_correlations(
     for bigram in bigrams:
 
         # Check for arbitrary support level
-        if sum(bigrams[bigram]) < ga.params.population_size * 0.05:
+        if sum(bigrams[bigram]) < len(unique_chromosomes) * 0.05:
             continue
 
         elif np.std(bigrams[bigram]) == 0:
