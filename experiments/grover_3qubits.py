@@ -180,14 +180,16 @@ def compute_bigram_correlations(
             else:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
-                ga.gate_set.append(NewCombinedGate)
+                
+                if not ga.gate_set.contains(NewCombinedGate):
+                    ga.gate_set.append(NewCombinedGate)
 
-                log_event(
-                    experiment_id=EXPERIMENT_ID,
-                    event_type=GATE_ADDED_EVENT,
-                    payload=f"Creating {bigram} as separate gate due to presence in every chromosome.",
-                    target_path="results/events.csv",
-                )
+                    log_event(
+                        experiment_id=EXPERIMENT_ID,
+                        event_type=GATE_ADDED_EVENT,
+                        payload=f"Creating {bigram} as separate gate due to presence in every chromosome.",
+                        target_path="results/events.csv",
+                    )
 
         else:
             correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
@@ -197,14 +199,15 @@ def compute_bigram_correlations(
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
 
-                ga.gate_set.append(NewCombinedGate)
+                if not ga.gate_set.contains(NewCombinedGate):
+                    ga.gate_set.append(NewCombinedGate)
 
-                log_event(
-                    experiment_id=EXPERIMENT_ID,
-                    event_type=GATE_ADDED_EVENT,
-                    payload=f"Creating {bigram} as separate gate due to fitness correlation of {correlation}.",
-                    target_path="results/events.csv",
-                )
+                    log_event(
+                        experiment_id=EXPERIMENT_ID,
+                        event_type=GATE_ADDED_EVENT,
+                        payload=f"Creating {bigram} as separate gate due to fitness correlation of {correlation}.",
+                        target_path="results/events.csv",
+                    )
 
 
 def run_grover():

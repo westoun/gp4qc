@@ -5,6 +5,26 @@ from typing import List, Union, Type
 from gates import Gate, Oracle, CombinedGate, CombinedGateConstructor, OracleConstructor
 
 
+def construct_gate_type_name(gate: Gate) -> str:
+    """Construct the parameter-free name for a gate.
+    Also handles gates with constructor classes.
+    """
+    if type(gate) in [CombinedGate, CombinedGateConstructor]:
+        gate_names = []
+        for GateType in gate.GateTypes:
+            if GateType == Oracle or type(GateType) == OracleConstructor:
+                gate_names.append("oracle")
+            else:
+                gate_names.append(GateType.name)
+
+        return "_".join(gate_names)
+    elif type(gate) in [Oracle, OracleConstructor]:
+        # TA: How to handle multiple oracles?
+        return "oracle"
+    else:
+        return gate.name
+
+
 def construct_ngram_name(gates: List[Gate]) -> str:
     """Construct the ngram name for a list of gates
     based on their types.
