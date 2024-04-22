@@ -66,6 +66,7 @@ from utils.logging import (
     GATE_ADDED_EVENT,
     ALGORITHM_RESTART_EVENT,
 )
+from utils.gates import extract_ngram_types, get_unique_chomosomes, construct_ngram_name
 
 # Place experiment id creation outside of main function
 # to avoid having to pass it through multiple layer of
@@ -111,59 +112,6 @@ def state_to_distribution(target_state: List[int]) -> List[float]:
     return distribution.tolist()
 
 
-def construct_ngram_name(gates: List[Gate]) -> str:
-    gate_names = []
-    for gate in gates:
-        if type(gate) in [CombinedGate, CombinedGateConstructor]:
-            for GateType in gate.GateTypes:
-                if GateType == Oracle or type(GateType) == OracleConstructor:
-                    gate_names.append("oracle")
-                else:
-                    gate_names.append(GateType.name)
-        elif type(gate) in [Oracle, OracleConstructor]:
-            # TA: How to handle multiple oracles?
-            gate_names.append("oracle")
-        else:
-            gate_names.append(gate.name)
-    return "_".join(gate_names)
-
-
-def extract_ngram_types(
-    gates: List[Union[Type, CombinedGateConstructor, OracleConstructor]]
-) -> List[Type]:
-    gate_types = []
-    for gate in gates:
-        if type(gate) == CombinedGateConstructor:
-            gate_types.extend(gate.GateTypes)
-        elif type(gate) == OracleConstructor:
-            gate_types.append(gate)
-        elif type(gate) in [Oracle, CombinedGate]:
-            raise ValueError("Missing information! Should be constructor classes!")
-        else:
-            gate_types.append(gate)
-    return gate_types
-
-
-def get_unique_chomosomes(population: List[List[Gate]]) -> List[List[Gate]]:
-    # for duplicates (not accounting for parameter values),
-    # keep the chromosomes with better (=lower) fitness.
-    unique_chromosomes = {}
-    for chromosome in population:
-        chromosome_name = construct_ngram_name(chromosome)
-
-        if chromosome_name in unique_chromosomes:
-            if (
-                unique_chromosomes[chromosome_name].fitness.values[0]
-                > chromosome.fitness.values[0]
-            ):
-                unique_chromosomes[chromosome_name] = chromosome
-
-        else:
-            unique_chromosomes[chromosome_name] = chromosome
-
-    return list(unique_chromosomes.values())
-
-
 def compute_bigram_correlations(
     ga: GA,
     population: List[List[Gate]],
@@ -173,7 +121,7 @@ def compute_bigram_correlations(
     population = [ga.toolbox.clone(ind) for ind in population]
 
     # Get unique chromosomes and recompute fitness values to avoid
-    # distorted correlation computation due to high amount of 
+    # distorted correlation computation due to high amount of
     # duplicates in the population.
     unique_chromosomes = get_unique_chomosomes(population)
     fitness_values = [chromosome.fitness.values[0] for chromosome in unique_chromosomes]
@@ -248,6 +196,7 @@ def compute_bigram_correlations(
             if correlation < -0.25:
 
                 NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
+
                 ga.gate_set.append(NewCombinedGate)
 
                 log_event(
