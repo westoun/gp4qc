@@ -144,13 +144,13 @@ def run_bernstein_vazirani():
     )
 
     ga_params = GAParams(
-        population_size=100,
-        generations=10,
+        population_size=500,
+        generations=100,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.03,
         swap_order_mutation_prob=0,
         operand_mutation_prob=0,
-        chromosome_length=10,
+        chromosome_length=15,
         log_average_fitness=True,
         log_average_fitness_at=1,
         cpu_count=2,
