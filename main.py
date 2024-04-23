@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
-from experiments import run_bell_state_2qubits, \
-    run_bell_state_3qubits, run_half_adder, \
-        run_deutsch, run_create_probability_distribution, \
-        run_grover, run_construct_relu
+from experiments import (
+    run_bell_state_2qubits,
+    run_bell_state_3qubits,
+    run_half_adder,
+    run_deutsch,
+    run_create_probability_distribution,
+    run_grover,
+    run_construct_relu,
+    run_bernstein_vazirani,
+)
 
 if __name__ == "__main__":
     # run_bell_state_2qubits()
@@ -11,5 +17,6 @@ if __name__ == "__main__":
     # run_half_adder()
     # run_deutsch()
     # run_create_probability_distribution()
-    run_grover()
+    # run_grover()
     # run_construct_relu()
+    run_bernstein_vazirani()

@@ -5,3 +5,4 @@ from .deutsch_problem import run_deutsch
 from .probability_distribution import run_create_probability_distribution
 from .grover_3qubits import run_grover
 from .relu import run_construct_relu
+from .bernstein_vazirani import run_bernstein_vazirani

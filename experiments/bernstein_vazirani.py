@@ -69,10 +69,13 @@ from utils.logging import (
 from gates.utils import extract_ngram_types, get_unique_chomosomes, construct_ngram_name
 from utils.formatting import state_to_distribution
 
+# TODO: move to utils folder
+from .grover_3qubits import compute_bigram_correlations
+
 # Place experiment id creation outside of main function
 # to avoid having to pass it through multiple layer of
 # nested function calls.
-EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
+EXPERIMENT_ID = f"bernstein_vazirani_3qubits_{uuid4()}"
 
 # Describe in which configuration the experiment is being
 # run. Especially: which treatments are being applied?
@@ -80,123 +83,17 @@ DESCRIPTION = ""
 
 
 def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
-    # Circuit design taken from
-    # https://quantumcomputing.stackexchange.com/q/8850
-
-    circuit = QuantumCircuit(len(target_state))
+    circuit = QuantumCircuit(len(target_state) + 1)
 
     for i, qubit_state in enumerate(target_state):
-        if qubit_state == 0:
-            circuit.x(i)
-
-    circuit.ccz(0, 1, 2)
-
-    for i, qubit_state in enumerate(target_state):
-        if qubit_state == 0:
-            circuit.x(i)
+        if qubit_state == 1:
+            # Set ancilla as target qubit
+            circuit.cx(control_qubit=i, target_qubit=len(target_state))
 
     return circuit
 
 
-def compute_bigram_correlations(
-    ga: GA,
-    population: List[List[Gate]],
-    fitness_values: List[float],
-    generation: int,
-) -> None:
-    population = [ga.toolbox.clone(ind) for ind in population]
-
-    # Get unique chromosomes and recompute fitness values to avoid
-    # distorted correlation computation due to high amount of
-    # duplicates in the population.
-    unique_chromosomes = get_unique_chomosomes(population)
-    fitness_values = [chromosome.fitness.values[0] for chromosome in unique_chromosomes]
-
-    bigrams = {}
-    bigram_types = {}
-
-    # Note: in the gate_set we have constructor classes, while
-    # the chromosomes themselves contain the constructed gates.
-    # Since combined gates require the constructor classes,
-    # bigram_types are collected here. The construct_ngram_name
-    # makes sure that both classes and instances are mapped to
-    # the same name space.
-    for gate1 in ga.gate_set.gates:
-        if type(gate1) == Identity:
-            continue
-
-        for gate2 in ga.gate_set.gates:
-            if type(gate2) == Identity:
-                continue
-
-            bigram = construct_ngram_name([gate1, gate2])
-
-            bigrams[bigram] = []
-            bigram_types[bigram] = extract_ngram_types([gate1, gate2])
-
-    for chromosome in unique_chromosomes:
-        chromosome_bigrams = set()
-
-        for i in range(len(chromosome) - 1):
-            gate = chromosome[i]
-            successor_gate = chromosome[i + 1]
-
-            if type(gate) == Identity or type(successor_gate) == Identity:
-                continue
-
-            bigram = construct_ngram_name([gate, successor_gate])
-            chromosome_bigrams.add(bigram)
-
-        for bigram in bigrams:
-            if bigram in chromosome_bigrams:
-                bigrams[bigram].append(1)
-            else:
-                bigrams[bigram].append(0)
-
-    for bigram in bigrams:
-
-        # Check for arbitrary support level
-        if sum(bigrams[bigram]) < len(unique_chromosomes) * 0.05:
-            continue
-
-        elif np.std(bigrams[bigram]) == 0:
-            if bigrams[bigram][0] == 0:
-                # not present in any chromosome
-                pass
-            else:
-
-                NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
-
-                if not ga.gate_set.contains(NewCombinedGate):
-                    ga.gate_set.append(NewCombinedGate)
-
-                    log_event(
-                        experiment_id=EXPERIMENT_ID,
-                        event_type=GATE_ADDED_EVENT,
-                        payload=f"Creating {bigram} as separate gate due to presence in every chromosome.",
-                        target_path="results/events.csv",
-                    )
-
-        else:
-            correlation = np.corrcoef(bigrams[bigram], fitness_values)[0, 1]
-
-            # Look for negative correlation, since lower fitness values are better
-            if correlation < -0.25:
-
-                NewCombinedGate = CombinedGateConstructor(bigram_types[bigram])
-
-                if not ga.gate_set.contains(NewCombinedGate):
-                    ga.gate_set.append(NewCombinedGate)
-
-                    log_event(
-                        experiment_id=EXPERIMENT_ID,
-                        event_type=GATE_ADDED_EVENT,
-                        payload=f"Creating {bigram} as separate gate due to fitness correlation of {correlation}.",
-                        target_path="results/events.csv",
-                    )
-
-
-def run_grover():
+def run_bernstein_vazirani():
     target_states = [
         [0, 0, 0],
         [0, 0, 1],
@@ -243,30 +140,29 @@ def run_grover():
             Phase,
             CH,
         ],
-        qubit_num=3,
+        qubit_num=4,
     )
 
     ga_params = GAParams(
-        population_size=1000,
-        generations=800,
+        population_size=100,
+        generations=10,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.03,
         swap_order_mutation_prob=0,
         operand_mutation_prob=0,
-        chromosome_length=30,
-        log_average_fitness=False,
+        chromosome_length=10,
+        log_average_fitness=True,
         log_average_fitness_at=1,
-        cpu_count=28,
+        cpu_count=2,
         elitism_percentage=0.01,
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)
-    # fitness: Fitness = SpectorFitness(params=fitness_params)
     fitness: Fitness = BaselineFitness(params=fitness_params)
     # fitness: Fitness = IndirectQAFitness(params=fitness_params)
     # fitness: Fitness = DirectQAFitness(params=fitness_params)
 
-    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=8)
+    optimizer_params = OptimizerParams(qubit_num=4, measurement_qubit_num=3, max_iter=8)
     optimizer: Optimizer = NumericalOptimizer(
         target_distributions, params=optimizer_params
     )
@@ -315,7 +211,7 @@ def run_grover():
 
     TOP_N = 3
     for chromosome, fitness_value in genetic_algorithm.get_best_chromosomes(n=TOP_N):
-        circuit = build_circuit(chromosome, qubit_num=3)
+        circuit = build_circuit(chromosome, qubit_num=4)
 
         print(f"\nFitness value: {fitness_value}")
         print(circuit)
