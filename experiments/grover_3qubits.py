@@ -257,7 +257,7 @@ def run_grover():
         log_average_fitness=False,
         log_average_fitness_at=1,
         cpu_count=28,
-        elitism_percentage=0.01,
+        elitism_percentage=0.08,
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)
