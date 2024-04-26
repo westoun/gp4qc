@@ -144,8 +144,8 @@ def run_bernstein_vazirani():
     )
 
     ga_params = GAParams(
-        population_size=500,
-        generations=100,
+        population_size=1000,
+        generations=500,
         crossover_prob=0.4,
         swap_gate_mutation_prob=0.03,
         swap_order_mutation_prob=0,
@@ -153,8 +153,8 @@ def run_bernstein_vazirani():
         chromosome_length=15,
         log_average_fitness=True,
         log_average_fitness_at=1,
-        cpu_count=2,
-        elitism_percentage=0.01,
+        cpu_count=25,
+        elitism_percentage=0.1,
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)

@@ -256,8 +256,8 @@ def run_grover():
         chromosome_length=30,
         log_average_fitness=False,
         log_average_fitness_at=1,
-        cpu_count=28,
-        elitism_percentage=0.08,
+        cpu_count=25,
+        elitism_percentage=0.1,
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)

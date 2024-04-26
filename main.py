@@ -17,6 +17,6 @@ if __name__ == "__main__":
     # run_half_adder()
     # run_deutsch()
     # run_create_probability_distribution()
-    # run_grover()
+    run_grover()
     # run_construct_relu()
-    run_bernstein_vazirani()
+    # run_bernstein_vazirani()
