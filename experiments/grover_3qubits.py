@@ -266,7 +266,7 @@ def run_grover():
     # fitness: Fitness = IndirectQAFitness(params=fitness_params)
     # fitness: Fitness = DirectQAFitness(params=fitness_params)
 
-    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=8)
+    optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=5)
     optimizer: Optimizer = NumericalOptimizer(
         target_distributions, params=optimizer_params
     )
