@@ -5,6 +5,7 @@ from typing import List, Union, Type
 from .gate import Gate
 from .oracle import Oracle, OracleConstructor
 from .combined_gate import CombinedGate, CombinedGateConstructor
+from .input import InputEncoding, InputEncodingConstructor
 
 
 def construct_gate_type_name(gate: Gate) -> str:
@@ -16,6 +17,8 @@ def construct_gate_type_name(gate: Gate) -> str:
         for GateType in gate.GateTypes:
             if GateType == Oracle or type(GateType) == OracleConstructor:
                 gate_names.append("oracle")
+            elif GateType == InputEncodingConstructor:
+                gate_names.append(GateType.EncodingType.name)
             else:
                 gate_names.append(GateType.name)
 
@@ -23,6 +26,8 @@ def construct_gate_type_name(gate: Gate) -> str:
     elif type(gate) in [Oracle, OracleConstructor]:
         # TA: How to handle multiple oracles?
         return "oracle"
+    elif type(gate) == InputEncodingConstructor:
+        return gate.EncodingType.name
     else:
         return gate.name
 
@@ -38,11 +43,15 @@ def construct_ngram_name(gates: List[Gate]) -> str:
             for GateType in gate.GateTypes:
                 if GateType == Oracle or type(GateType) == OracleConstructor:
                     gate_names.append("oracle")
+                elif GateType == InputEncodingConstructor:
+                    gate_names.append(GateType.EncodingType.name)
                 else:
                     gate_names.append(GateType.name)
         elif type(gate) in [Oracle, OracleConstructor]:
             # TA: How to handle multiple oracles?
             gate_names.append("oracle")
+        elif type(gate) == InputEncodingConstructor:
+            gate_names.append(GateType.EncodingType.name)
         else:
             gate_names.append(gate.name)
     return "_".join(gate_names)
