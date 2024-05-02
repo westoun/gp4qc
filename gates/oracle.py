@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from abc import ABC, abstractmethod
-from qiskit import QuantumCircuit
+from quasim import Circuit
 from random import sample
 from typing import Any, List
 
@@ -12,13 +12,13 @@ class Oracle(MultiCaseGate, ABC):
     name: str = "oracle"
     is_oracle: bool = True
 
-    _circuits: List[QuantumCircuit] = None
+    _circuits: List[Circuit] = None
     _oracle_qubit_num: int = None
 
     targets = []
 
     def __init__(
-        self, qubit_num: int, circuits: List[QuantumCircuit], oracle_qubit_num: int
+        self, qubit_num: int, circuits: List[Circuit], oracle_qubit_num: int
     ) -> None:
         self._circuits = circuits
         self._oracle_qubit_num = oracle_qubit_num
@@ -30,9 +30,9 @@ class Oracle(MultiCaseGate, ABC):
     def mutate_operands(self) -> None:
         self.targets = sample(range(0, self._qubit_num), self._oracle_qubit_num)
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        oracle_circuit = self._circuits[self._case_index].to_gate(label="oracle")
-        circuit.append(oracle_circuit, self.targets)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        for gate in self._circuits[self._case_index].gates:
+            circuit.apply(gate)
         return circuit
 
     def __repr__(self) -> str:
@@ -40,12 +40,12 @@ class Oracle(MultiCaseGate, ABC):
 
 
 class OracleConstructor:
-    _circuits: List[QuantumCircuit] = None
+    _circuits: List[Circuit] = None
     _oracle_qubit_num: int = None
 
-    def __init__(self, circuits: List[QuantumCircuit]) -> None:
+    def __init__(self, circuits: List[Circuit]) -> None:
         self._circuits = circuits
-        self._oracle_qubit_num = len(circuits[0].qubits)
+        self._oracle_qubit_num = circuits[0].qubit_num
 
     def __call__(self, qubit_num: int) -> Oracle:
         return Oracle(

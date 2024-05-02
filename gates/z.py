@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import Z as ZGate
 from random import randint
 
 from .gate import Gate
@@ -18,8 +19,8 @@ class Z(Gate):
     def mutate_operands(self) -> None:
         self.target = randint(0, self._qubit_num - 1)
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.z(self.target)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        circuit.apply(ZGate(self.target))
         return circuit
 
     def __repr__(self) -> str:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit
+from quasim import Circuit
 from typing import Any, List, Union, Tuple, Type
 
 from .gate import Gate
@@ -31,7 +31,7 @@ class CombinedGate(OptimizableGate, MultiCaseGate):
         for gate in self.gates:
             gate.mutate_operands()
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
+    def apply_to(self, circuit: Circuit) -> Circuit:
         for gate in self.gates:
             circuit = gate.apply_to(circuit)
         return circuit

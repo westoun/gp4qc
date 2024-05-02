@@ -3,7 +3,8 @@
 from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import X as XGate, CCZ as CCZGate
 from statistics import mean
 from typing import List, Callable, Type, Union
 from uuid import uuid4
@@ -79,21 +80,21 @@ EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
 DESCRIPTION = ""
 
 
-def construct_oracle_circuit(target_state: List[int]) -> QuantumCircuit:
+def construct_oracle_circuit(target_state: List[int]) -> Circuit:
     # Circuit design taken from
     # https://quantumcomputing.stackexchange.com/q/8850
 
-    circuit = QuantumCircuit(len(target_state))
+    circuit = Circuit(len(target_state))
 
     for i, qubit_state in enumerate(target_state):
         if qubit_state == 0:
-            circuit.x(i)
+            circuit.apply(XGate(i))
 
-    circuit.ccz(0, 1, 2)
+    circuit.apply(CCZGate(0, 1, 2))
 
     for i, qubit_state in enumerate(target_state):
         if qubit_state == 0:
-            circuit.x(i)
+            circuit.apply(XGate(i))
 
     return circuit
 
@@ -208,7 +209,7 @@ def run_grover():
         [1, 1, 1],
     ]
 
-    oracle_circuits: List[QuantumCircuit] = []
+    oracle_circuits: List[Circuit] = []
     for target_state in target_states:
         oracle_circuit = construct_oracle_circuit(target_state)
         oracle_circuits.append(oracle_circuit)

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit, Aer, transpile
-from qiskit_aer import AerError
+from quasim import Circuit, QuaSim
 from typing import List, Union, Tuple
 
 from fitness import Fitness
@@ -9,33 +8,18 @@ from gates import Gate, MultiCaseGate, InputEncoding, Oracle, OptimizableGate
 from .params import OptimizerParams
 
 
-def run_circuit(circuit: QuantumCircuit, decompose_reps: int = 5) -> List[float]:
-    backend = Aer.get_backend("statevector_simulator")
-
-    transpiled_circuit = circuit.decompose(reps=decompose_reps)
-
-    job = backend.run(transpiled_circuit)
-
-    try:
-        result = job.result()
-    except AerError as e:
-        if decompose_reps > 10:  # avoid infinite retries
-            raise AerError(str(e))
-
-        return run_circuit(circuit, decompose_reps=decompose_reps + 1)
-
-    output_state = result.get_statevector(transpiled_circuit, decimals=3)
-    output_state = output_state.reverse_qargs()
-    state_distribution = output_state.probabilities().tolist()
-    return state_distribution
+def run_circuit(circuit: Circuit) -> List[float]:
+    simulator = QuaSim()
+    simulator.evaluate_circuit(circuit)
+    return circuit.probabilities
 
 
 def build_circuit(
     chromosome: List[Gate],
     qubit_num: int,
     case_index=0,
-) -> QuantumCircuit:
-    circuit = QuantumCircuit(qubit_num)
+) -> Circuit:
+    circuit = Circuit(qubit_num)
 
     for gate in chromosome:
         if gate.is_multicase:

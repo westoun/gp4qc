@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import RZ as RZGate
 from random import randint, random
 from typing import List, Union, Tuple
 
@@ -25,8 +26,8 @@ class RZ(OptimizableGate):
     def mutate_operands(self) -> None:
         self.target = randint(0, self._qubit_num - 1)
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.rz(self.theta, self.target)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        circuit.apply(RZGate(self.target, theta=self.theta))
         return circuit
 
     def __repr__(self) -> str:

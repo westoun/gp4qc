@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import pickle
-from qiskit import QuantumCircuit
+from quasim import Circuit
 from statistics import mean
 from typing import List
 from uuid import uuid4
@@ -54,7 +54,7 @@ EXPERIMENT_ID = f"deutsch_{uuid4()}"
 
 def construct_oracle_circuit(
     input_values: List[List[int]], target_distributions: List[List[float]]
-) -> QuantumCircuit:
+) -> Circuit:
     ga_params = GAParams(
         population_size=400,
         generations=100,

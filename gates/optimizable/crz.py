@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import CRZ as CRZGate
 from random import random, sample
 from typing import List, Union, Tuple
 
@@ -30,8 +31,8 @@ class CRZ(OptimizableGate):
     def mutate_operands(self) -> None:
         self.target, self.control = sample(range(0, self._qubit_num), 2)
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.crz(self.theta, self.control, self.target)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        circuit.apply(CRZGate(self.control, self.target, theta=self.theta))
         return circuit
 
     def __repr__(self) -> str:

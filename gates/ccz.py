@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import CCZ as CCZGate
 from random import randint, sample
 
 from .gate import Gate
@@ -26,8 +27,8 @@ class CCZ(Gate):
             range(0, self._qubit_num), 3
         )
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.ccz(self.controll1, self.controll2, self.target)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        circuit.apply(CCZGate(self.controll1, self.controll2, self.target))
         return circuit
 
     def __repr__(self) -> str:

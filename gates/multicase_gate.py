@@ -1,7 +1,6 @@
 #!/usr/bin/env pyhton3
 
 from abc import ABC, abstractmethod
-from qiskit import QuantumCircuit
 from typing import List
 
 from .gate import Gate
@@ -13,6 +12,7 @@ class MultiCaseGate(Gate):
     example, return different circuits depending on the
     test case.
     """
+
     is_multicase: bool = True
 
     _case_index: int = 0
