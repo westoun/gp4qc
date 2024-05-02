@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from abc import ABC, abstractmethod, abstractproperty
-from qiskit import QuantumCircuit
 from typing import List, Tuple, Union
 
 from gates.gate import Gate

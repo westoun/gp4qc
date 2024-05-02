@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import Swap as SwapGate
 from random import randint, sample
 
 from .gate import Gate
@@ -23,8 +24,8 @@ class Swap(Gate):
     def mutate_operands(self) -> None:
         self.target1, self.target2 = sample(range(0, self._qubit_num), 2)
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        circuit.swap(self.target1, self.target2)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        circuit.apply(SwapGate(self.target1, self.target2))
         return circuit
 
     def __repr__(self) -> str:

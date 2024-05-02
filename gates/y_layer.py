@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from qiskit import QuantumCircuit
+from quasim import Circuit
+from quasim.gates import Y
 
 from .gate import Gate
 
@@ -14,9 +15,9 @@ class YLayer(Gate):
     def mutate_operands(self) -> None:
         pass
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
+    def apply_to(self, circuit: Circuit) -> Circuit:
         for i in range(self._qubit_num):
-            circuit.y(i)
+            circuit.apply(Y(i))
         return circuit
 
     def __repr__(self) -> str:

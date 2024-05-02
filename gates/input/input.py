@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from abc import ABC, abstractmethod, abstractclassmethod
-from qiskit import QuantumCircuit
+from quasim import Circuit
 from typing import Any, List, Type
 
 from gates.multicase_gate import MultiCaseGate
@@ -11,7 +11,7 @@ class InputEncoding(MultiCaseGate, ABC):
     name: str = "input"
     is_input: bool = True
 
-    _circuits: List[QuantumCircuit] = None
+    _circuits: List[Circuit] = None
     _targets: List[int] = None
 
     def __init__(self, qubit_num: int, input_values: List[List[int]]) -> None:
@@ -24,9 +24,9 @@ class InputEncoding(MultiCaseGate, ABC):
     def mutate_operands(self) -> None:
         pass
 
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit:
-        encoding_circuit = self._circuits[self._case_index].to_gate(label="input")
-        circuit.append(encoding_circuit, self._targets)
+    def apply_to(self, circuit: Circuit) -> Circuit:
+        for gate in self._circuits[self._case_index].gates:
+            circuit.apply(gate)
         return circuit
 
     def __repr__(self) -> str:

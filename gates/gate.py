@@ -1,7 +1,7 @@
 #!/usr/bin/env pyton3
 
 from abc import ABC, abstractmethod, abstractclassmethod
-from qiskit import QuantumCircuit
+from quasim import Circuit
 
 
 class Gate(ABC):
@@ -28,7 +28,7 @@ class Gate(ABC):
     def mutate_operands(self) -> None: ...
 
     @abstractmethod
-    def apply_to(self, circuit: QuantumCircuit) -> QuantumCircuit: ...
+    def apply_to(self, circuit: Circuit) -> Circuit: ...
 
     @abstractmethod
     def __repr__(self) -> str: ...
