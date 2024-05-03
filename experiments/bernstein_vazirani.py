@@ -160,7 +160,7 @@ def run_bernstein_vazirani(
         swap_order_mutation_prob=0,
         operand_mutation_prob=0,
         chromosome_length=15,
-        log_average_fitness=True,
+        log_average_fitness=False,
         log_average_fitness_at=1,
         cpu_count=25,
         elitism_percentage=0.1,
