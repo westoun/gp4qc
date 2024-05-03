@@ -100,6 +100,7 @@ def run_bernstein_vazirani(
     EXPERIMENT_ID = f"bernstein_vazirani_3qubits_{uuid4()}"
 
     if abstraction_learning:
+        global DESCRIPTION
         DESCRIPTION = "abstraction learning enabled"
 
     target_states = [
@@ -181,6 +182,8 @@ def run_bernstein_vazirani(
         target_path="results/experiments.csv",
         description=DESCRIPTION,
     )
+
+    raise
 
     mean_fitness_values = []
 

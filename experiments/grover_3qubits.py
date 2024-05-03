@@ -203,6 +203,7 @@ def run_grover(
     EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
 
     if abstraction_learning:
+        global DESCRIPTION
         DESCRIPTION = "abstraction learning enabled"
 
     target_states = [
