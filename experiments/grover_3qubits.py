@@ -73,7 +73,7 @@ from utils.formatting import state_to_distribution
 # Place experiment id creation outside of main function
 # to avoid having to pass it through multiple layer of
 # nested function calls.
-EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
+EXPERIMENT_ID = ""
 
 # Describe in which configuration the experiment is being
 # run. Especially: which treatments are being applied?
@@ -197,7 +197,14 @@ def compute_bigram_correlations(
                     )
 
 
-def run_grover():
+def run_grover(
+    FitnessFunction: Type[Fitness] = BaselineFitness, abstraction_learning: bool = False
+):
+    EXPERIMENT_ID = f"grover_3qubits_{uuid4()}"
+
+    if abstraction_learning:
+        DESCRIPTION = "abstraction learning enabled"
+
     target_states = [
         [0, 0, 0],
         [0, 0, 1],
@@ -262,10 +269,7 @@ def run_grover():
     )
 
     fitness_params = FitnessParams(validity_checks=[], classical_oracle_count=2**3)
-    # fitness: Fitness = SpectorFitness(params=fitness_params)
-    fitness: Fitness = BaselineFitness(params=fitness_params)
-    # fitness: Fitness = IndirectQAFitness(params=fitness_params)
-    # fitness: Fitness = DirectQAFitness(params=fitness_params)
+    fitness: Fitness = FitnessFunction(params=fitness_params)
 
     optimizer_params = OptimizerParams(qubit_num=3, measurement_qubit_num=3, max_iter=5)
     optimizer: Optimizer = NumericalOptimizer(
@@ -303,7 +307,8 @@ def run_grover():
             target_path="results/fitness_values.csv",
         )
 
-    # genetic_algorithm.on_after_generation(compute_bigram_correlations)
+    if abstraction_learning:
+        genetic_algorithm.on_after_generation(compute_bigram_correlations)
     genetic_algorithm.on_after_generation(log_fitness_callback)
 
     genetic_algorithm.run()
