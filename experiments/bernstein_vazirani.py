@@ -183,8 +183,6 @@ def run_bernstein_vazirani(
         description=DESCRIPTION,
     )
 
-    raise
-
     mean_fitness_values = []
 
     def log_fitness_callback(
