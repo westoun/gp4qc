@@ -20,11 +20,11 @@ class GA:
 
     gate_set: GateSet
 
-    evolved_population: List[Gate] = []
-    _after_generation_callbacks: List[Callable] = []
-    _on_completion_callbacks: List[Callable] = []
+    evolved_population: List[Gate]
+    _after_generation_callbacks: List[Callable]
+    _on_completion_callbacks: List[Callable]
 
-    _stopped: bool = False
+    _stopped: bool
 
     def __init__(
         self,
@@ -33,6 +33,11 @@ class GA:
         optimizer: Optimizer,
         params: GAParams = default_params,
     ) -> None:
+        self.evolved_population = []
+        self._after_generation_callbacks = []
+        self._on_completion_callbacks = []
+        self._stopped = False
+
         self.gate_set = gate_set
         self.fitness = fitness
         self.optimizer = optimizer
